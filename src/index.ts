@@ -52,7 +52,11 @@ client.on("messageCreate", async (message) => {
     }
 
     const site = await fetch(url[0]);
-    const title = parseTitle(await site.text());
+    let title = parseTitle(await site.text());
+
+    if (title.length >= 99) {
+      title = title.slice(0, 96) + "...";
+    }
 
     await message.startThread({
       name: title,

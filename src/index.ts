@@ -42,8 +42,8 @@ client.on("messageCreate", async (message) => {
     const url = urlRegex.exec(message.content);
 
     if (!url) {
-      const msg = await message.reply("Votre message ne contient pas de lien, merci de répondre dans le fil en question !" +
-        " et de supprimer votre message s'il n'a rien à faire ici !");
+      const msg = await message.reply("Votre message ne contient pas de lien, merci de répondre dans le fil en question." +
+        " et de supprimer votre message.");
       setTimeout(() => {
         void msg.delete();
       }, 60 * 1000)

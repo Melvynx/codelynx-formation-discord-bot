@@ -46,6 +46,7 @@ client.on("messageCreate", async (message) => {
         " et de supprimer votre message.");
       setTimeout(() => {
         void msg.delete();
+        void message.delete();
       }, 60 * 1000)
 
      return;

@@ -2,7 +2,7 @@ import { ChannelType, Client, IntentsBitField, ThreadAutoArchiveDuration } from 
 import { env } from "./util/env";
 
 const parseTitle = (body: string): string => {
-  let match = body.match(/<title>([^<]*)<\/title>/);
+  let match = body.match(/<title[^>]*>([^<]*)<\/title>/);
   if (!match || typeof match[1] !== 'string') {
     console.log("don't found title !");
     return "no title found for website"

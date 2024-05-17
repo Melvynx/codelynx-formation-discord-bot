@@ -42,14 +42,23 @@ client.on("messageCreate", async (message) => {
     const url = urlRegex.exec(message.content);
 
     if (!url) {
-      const msg = await message.reply("Votre message ne contient pas de lien, merci de répondre dans le fil en question." +
-        " et de supprimer votre message.");
-      setTimeout(() => {
-        void msg.delete();
-        void message.delete();
-      }, 60 * 1000)
-
-     return;
+      const msg = await message.reply(
+        "Votre message ne contient pas de lien, merci de répondre dans le fil en question et de supprimer votre message."
+      );
+    
+      setTimeout(async () => {
+        try {
+          await msg.delete();
+    
+          const content = message.content;
+          await message.author.send(`Ton message a été supprimé. C'était : \n\n ${content}`);
+          await message.delete();
+        } catch (e) {
+          console.error(e);
+        }
+      }, 60 * 1000);
+    
+      return;
     }
 
     const site = await fetch(url[0]);

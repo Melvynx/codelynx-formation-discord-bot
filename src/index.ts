@@ -1,71 +1,23 @@
-import { ChannelType, Client, IntentsBitField, ThreadAutoArchiveDuration } from "discord.js";
-import { env } from "./util/env";
+import { ArcClient } from "arcscord";
+import { env } from "./utils/env/env.util";
+import { AutoTreads } from "./events/auto_threads/auto_threads.class";
+import { NewLinkThreadName } from "./components/new_link_thread_name/new_link_thread_name.class";
+import { RenameLinkThread } from "./components/rename_link_thread/rename_link_thread.class";
 
-const parseTitle = (body: string): string => {
-  let match = body.match(/<title>([^<]*)<\/title>/);
-  if (!match || typeof match[1] !== 'string') {
-    console.log("don't found title !");
-    return "no title found for website"
-  }
-  return match[1]
-}
-
-const client = new Client({intents: [
-    IntentsBitField.Flags.Guilds,
-    IntentsBitField.Flags.MessageContent,
-    IntentsBitField.Flags.GuildMessages,
-    IntentsBitField.Flags.GuildMessages
-  ]});
-
-client.on("ready", () => {
-  console.log("ready !");
+const client = new ArcClient(env.TOKEN, {
+  intents: [
+    "Guilds",
+    "MessageContent",
+    "GuildMessages",
+    "GuildMembers",
+    "DirectMessages",
+  ],
 });
 
-client.on("messageCreate", async (message) => {
-  try {
+void client.eventManager.loadEvent(new AutoTreads(client));
+client.componentManager.loadComponents([
+  new NewLinkThreadName(client),
+  new RenameLinkThread(client),
+]);
 
-    if (message.author.bot) {
-      return;
-    }
-
-    if (message.guildId !== env.SERVER_ID || message.channelId !== env.LINKS_CHANNEL_ID) {
-      return;
-    }
-    
-    if (message.channel.type !== ChannelType.GuildText) {
-      console.error("invalid channel");
-      return;
-    }
-
-    const urlRegex = new RegExp(/(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/, "g");
-
-    const url = urlRegex.exec(message.content);
-
-    if (!url) {
-      const msg = await message.reply("Votre message ne contient pas de lien, merci de répondre dans le fil en question." +
-        " et de supprimer votre message.");
-      setTimeout(() => {
-        void msg.delete();
-      }, 60 * 1000)
-
-     return;
-    }
-
-    const site = await fetch(url[0]);
-    let title = parseTitle(await site.text());
-
-    if (title.length >= 99) {
-      title = title.slice(0, 96) + "...";
-    }
-
-    await message.startThread({
-      name: title,
-      autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
-    });
-
-  } catch (e) {
-    console.error(e);
-  }
-});
-
-void client.login(env.TOKEN);
+void client.login();

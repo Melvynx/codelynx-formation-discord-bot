@@ -93,6 +93,8 @@ ${products.map((product) => `- ${product.title}`).join("\n")}`);
             }),
           }
         ).then((res) => res.json());
+
+        console.log(updateResult);
       } catch (e) {
         console.error(e);
         await message.reply("Une erreur est survenue.");

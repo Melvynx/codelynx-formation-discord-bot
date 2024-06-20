@@ -30,7 +30,7 @@ model Post {
 
 model Thread {
   id          String    @id
-  tweets      Post[]
+  posts       Post[]
   fullContent String
   Subject     Subject[]
 }

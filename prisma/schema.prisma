@@ -13,9 +13,55 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Tweet {
-  id       String   @id
-  content  String
-  url      String
-  createAt DateTime
+model Post {
+  id             String    @id
+  content        String
+  url            String
+  createAt       DateTime
+  fullJson       Json
+  Thread         Thread?   @relation(fields: [threadId], references: [id])
+  threadId       String?
+  Subject        Subject[]
+  type           PostType
+  previousPostId String?
+  previousPost   Post?     @relation("replyList", fields: [previousPostId], references: [id])
+  replys         Post[]    @relation("replyList")
+}
+
+model Thread {
+  id          String    @id
+  tweets      Post[]
+  fullContent String
+  Subject     Subject[]
+}
+
+model Subject {
+  id         String   @id
+  Thread     Thread?  @relation(fields: [threadId], references: [id])
+  threadId   String?
+  InitalPosz Post     @relation(fields: [postId], references: [id])
+  postId     String
+  tags       String[]
+  title      String
+  summary    String
+  Prompt     Prompt[]
+}
+
+model Prompt {
+  id              String   @id
+  version         Int
+  Send            String
+  Result          String
+  sendTokenUsed   Int
+  reciveTokenUsed Int
+  subject         Subject? @relation(fields: [subjectId], references: [id])
+  subjectId       String?
+}
+
+enum PostType {
+  POST // direct post without reply
+  REPLY
+  SELF_REPLY
+  REPOST
+  CITATION
 }

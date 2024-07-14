@@ -18,7 +18,7 @@ model XPost {
   content        String
   url            String
   createAt       DateTime
-  fullJson       Json
+  fullJson       String
   Thread         XThread?   @relation(fields: [threadId], references: [id])
   threadId       String?
   Subject        XSubject[]
@@ -61,7 +61,4 @@ model XPrompt {
 enum XPostType {
   POST // direct post without reply
   REPLY
-  SELF_REPLY
-  REPOST
-  CITATION
 }

@@ -13,52 +13,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id             String    @id
+model XPost {
+  id             String     @id
   content        String
   url            String
   createAt       DateTime
   fullJson       Json
-  Thread         Thread?   @relation(fields: [threadId], references: [id])
+  Thread         XThread?   @relation(fields: [threadId], references: [id])
   threadId       String?
-  Subject        Subject[]
-  type           PostType
+  Subject        XSubject[]
+  type           XPostType
   previousPostId String?
-  previousPost   Post?     @relation("replyList", fields: [previousPostId], references: [id])
-  replys         Post[]    @relation("replyList")
+  previousPost   XPost?     @relation("replyList", fields: [previousPostId], references: [id])
+  replys         XPost[]    @relation("replyList")
 }
 
-model Thread {
-  id          String    @id
-  posts       Post[]
+model XThread {
+  id          String     @id
+  posts       XPost[]
   fullContent String
-  Subject     Subject[]
+  Subject     XSubject[]
 }
 
-model Subject {
-  id         String   @id
-  Thread     Thread?  @relation(fields: [threadId], references: [id])
+model XSubject {
+  id         String    @id
+  Thread     XThread?  @relation(fields: [threadId], references: [id])
   threadId   String?
-  InitalPosz Post     @relation(fields: [postId], references: [id])
+  InitalPost XPost     @relation(fields: [postId], references: [id])
   postId     String
   tags       String[]
   title      String
   summary    String
-  Prompt     Prompt[]
+  Prompt     XPrompt[]
 }
 
-model Prompt {
-  id              String   @id
+model XPrompt {
+  id              String    @id
   version         Int
   Send            String
   Result          String
   sendTokenUsed   Int
   reciveTokenUsed Int
-  subject         Subject? @relation(fields: [subjectId], references: [id])
+  subject         XSubject? @relation(fields: [subjectId], references: [id])
   subjectId       String?
 }
 
-enum PostType {
+enum XPostType {
   POST // direct post without reply
   REPLY
   SELF_REPLY

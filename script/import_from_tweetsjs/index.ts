@@ -1,6 +1,8 @@
 import * as fs from "node:fs";
 import { z } from "zod";
+import type { XPost, XThread } from "@prisma/client";
 import { PrismaClient, type XPostType } from "@prisma/client";
+import { threadId } from "node:worker_threads";
 
 const basicTweetSchema = z.object({
   id: z.string(),
@@ -75,73 +77,52 @@ async function main() {
   const threadsIds: Map<string, string> = new Map();
   let i = 0;
   let lastPercent = -1;
+
+  const dbTweet: XPost[] = [];
+  const dbThread: XThread[] = [];
+
   for (const tweet of sortedTweets) {
     if (tweet.tweet.in_reply_to_status_id_str && sortedTweets.find((t) => t.tweet.id === tweet.tweet.in_reply_to_status_id_str)) {
 
       const threadId = threadsIds.get(tweet.tweet.in_reply_to_status_id_str) || tweet.tweet.in_reply_to_status_id_str;
 
       if (!threadsIds.has(threadId)) {
-        await prisma.xThread.upsert({
-          where: { id: threadId },
-          update: {
-            fullContent: "",
-          },
-          create: {
-            id: threadId,
-            fullContent: "",
-          },
+        dbThread.push({
+          id: threadId,
+          fullContent: "",
         });
         threadsIds.set(threadId, threadId);
-        await prisma.xPost.update({
-          where: { id: threadId },
-          data: {
-            threadId: threadId,
-          },
-        });
+
+        const index = dbTweet.findIndex((t) => t.id === threadId);
+        if (index > -1) {
+          dbTweet[index].threadId = threadId;
+        }
       }
 
-      await prisma.xPost.upsert({
-        where: { id: tweet.tweet.id },
-        update: {
-          content: tweet.tweet.full_text,
-          url: "https://x.com/melvynxdev/status/" + tweet.tweet.id,
-          createAt: tweet.tweet.created_at,
-          type: tweet.type,
-          fullJson: tweet.json,
-          threadId: threadId,
-          previousPostId: tweet.tweet.in_reply_to_status_id_str,
-        },
-        create: {
-          id: tweet.tweet.id,
-          content: tweet.tweet.full_text,
-          url: "https://x.com/melvynxdev/status/" + tweet.tweet.id,
-          createAt: tweet.tweet.created_at,
-          type: tweet.type,
-          fullJson: tweet.json,
-          threadId: threadId,
-          previousPostId: tweet.tweet.in_reply_to_status_id_str,
-        },
+      dbTweet.push({
+        id: tweet.tweet.id,
+        content: tweet.tweet.full_text,
+        url: "https://x.com/melvynxdev/status/" + tweet.tweet.id,
+        createAt: tweet.tweet.created_at,
+        type: tweet.type,
+        fullJson: tweet.json,
+        threadId: threadId,
+        previousPostId: tweet.tweet.in_reply_to_status_id_str,
       });
+
       threadsIds.set(tweet.tweet.id, threadId);
 
     } else {
-      await prisma.xPost.upsert({
-        where: { id: tweet.tweet.id },
-        update: {
-          content: tweet.tweet.full_text,
-          url: "https://x.com/melvynxdev/status/" + tweet.tweet.id,
-          createAt: tweet.tweet.created_at,
-          type: tweet.type,
-          fullJson: tweet.json,
-        },
-        create: {
-          id: tweet.tweet.id,
-          content: tweet.tweet.full_text,
-          url: "https://x.com/melvynxdev/status/" + tweet.tweet.id,
-          createAt: tweet.tweet.created_at,
-          type: tweet.type,
-          fullJson: tweet.json,
-        },
+
+      dbTweet.push({
+        id: tweet.tweet.id,
+        content: tweet.tweet.full_text,
+        url: "https://x.com/melvynxdev/status/" + tweet.tweet.id,
+        createAt: tweet.tweet.created_at,
+        type: tweet.type,
+        fullJson: tweet.json,
+        threadId: null,
+        previousPostId: null,
       });
     }
     i++;
@@ -152,6 +133,15 @@ async function main() {
     }
   }
 
+  await prisma.xThread.createMany({
+    data: dbThread,
+    skipDuplicates: true,
+  });
+
+  await prisma.xPost.createMany({
+    data: dbTweet,
+    skipDuplicates: true,
+  });
   console.log(`FINISHED in ${Math.round((Date.now() - start) / 1000)}s`);
 
 }

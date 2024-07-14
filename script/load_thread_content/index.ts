@@ -19,18 +19,14 @@ async function main() {
   let i = 0;
   let lastPercent = -1;
   for (const thread of threads) {
-    if (thread.fullContent !== "") {
-      continue;
-    }
 
     let content = "";
     for (const post of thread.posts.sort((a, b) => a.createAt.getDate() - b.createAt.getDate())) {
       content += post.content + ";\n;";
     }
-
     await prisma.xThread.update({
       where: { id: thread.id },
-      data: { fullContent: content },
+      data: { fullContent: content.slice(0, -3) },
     });
 
     i++;

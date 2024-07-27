@@ -48,14 +48,14 @@ model XSubject {
 }
 
 model XPrompt {
-  id              String    @id
-  version         Int
-  Send            String
-  Result          String
-  sendTokenUsed   Int
-  reciveTokenUsed Int
-  subject         XSubject? @relation(fields: [subjectId], references: [id])
-  subjectId       String?
+  id               String    @id
+  version          Int
+  send             String
+  result           String
+  sendTokenUsed    Int
+  receiveTokenUsed Int
+  subject          XSubject? @relation(fields: [subjectId], references: [id])
+  subjectId        String?
 }
 
 enum XPostType {

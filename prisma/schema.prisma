@@ -48,17 +48,24 @@ model XSubject {
 }
 
 model XPrompt {
-  id               String    @id
+  id               String     @id
   version          Int
   send             String
   result           String
   sendTokenUsed    Int
   receiveTokenUsed Int
-  subject          XSubject? @relation(fields: [subjectId], references: [id])
+  subject          XSubject?  @relation(fields: [subjectId], references: [id])
   subjectId        String?
+  type             PromptType @default(SUBJECT)
 }
 
 enum XPostType {
   POST // direct post without reply
   REPLY
+}
+
+enum PromptType {
+  SUBJECT
+  CLEAN
+  SEARCH
 }

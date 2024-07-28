@@ -2,7 +2,6 @@ import * as fs from "node:fs";
 import { z } from "zod";
 import type { XPost, XThread } from "@prisma/client";
 import { PrismaClient, type XPostType } from "@prisma/client";
-import { threadId } from "node:worker_threads";
 
 const basicTweetSchema = z.object({
   id: z.string(),

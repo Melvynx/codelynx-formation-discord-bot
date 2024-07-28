@@ -7,16 +7,18 @@
 		"start": "node -r @swc-node/register/esm -r tsconfig-paths/register ./src/index.ts",
 		"script:import_from_tweetsjs": "npx nodemon --exec node --import=@swc-node/register/esm-register ./script/import_from_tweetsjs/index.ts dev script",
 		"script:load_thread_content": "npx nodemon --exec node --import=@swc-node/register/esm-register ./script/load_thread_content/index.ts dev script",
+		"script:load_subject": "npx nodemon --exec node --import=@swc-node/register/esm-register ./script/load_subject/index.ts dev script",
 		"db:gen": "prisma generate",
 		"db:migrate": "prisma migrate dev"
 	},
 	"dependencies": {
 		"@prisma/client": "5.15.1",
 		"@types/node": "^20.12.12",
-		"arcscord": "0.1.15",
+		"arcscord": "0.1.16",
 		"discord-api-types": "^0.37.83",
 		"discord.js": "^14.15.2",
 		"dotenv": "^16.4.5",
+		"openai": "^4.53.2",
 		"prisma": "^5.15.1",
 		"typescript": "^5.4.5",
 		"zod": "^3.23.8"

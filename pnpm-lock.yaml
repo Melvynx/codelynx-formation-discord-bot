@@ -11,6 +11,9 @@ importers:
       '@prisma/client':
         specifier: 5.15.1
         version: 5.15.1(prisma@5.15.1)
+      '@sapphire/snowflake':
+        specifier: ^3.5.3
+        version: 3.5.3
       '@types/node':
         specifier: ^20.12.12
         version: 20.12.12

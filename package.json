@@ -13,6 +13,7 @@
 	},
 	"dependencies": {
 		"@prisma/client": "5.15.1",
+		"@sapphire/snowflake": "^3.5.3",
 		"@types/node": "^20.12.12",
 		"arcscord": "0.1.16",
 		"discord-api-types": "^0.37.83",

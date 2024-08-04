@@ -5,12 +5,13 @@ import type { ChatCompletionMessageParam } from "openai/resources";
 import { z } from "zod";
 
 // eslint-disable-next-line max-len
-const promptV0 = `Hello, im a code that sort threads, your mission is to give a title, a summery and tags for X threads of a web developper. If the thread is not in french, reply only with "NOFRENCH", else reply in json in this format : {
+const promptV0 = `Hello, im a code that sort threads, your mission is to give a title, a summery and tags for X threads of a web developper. If the thread is not in french, reply only with {"error": "NOFRENCH"}, else reply in json in this format : {
   "title": string,
   "summery": string,
   "tags": string[],
+  "error": null,
 }
-reply only with json object or "NOFRENCH", nothing else like markdown. the codebase can only parse json and NOFRENCH`;
+reply only with json object`;
 
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -38,8 +39,12 @@ async function main() {
       },
     ];
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: messages,
+      // eslint-disable-next-line camelcase
+      response_format: {
+        type: "json_object",
+      },
     });
 
     const content = completion.choices[0]?.message.content;
@@ -48,22 +53,27 @@ async function main() {
       return;
     }
 
-    if (content === "NOFRENCH") {
-      console.log(`thread not in french for thread ${thread.id}`);
-      return;
-    }
-
     const schema = z.object({
       title: z.string(),
       summery: z.string(),
       tags: z.array(z.string()),
-    });
+      error: z.null(),
+    }).or(
+      z.object({
+        error: z.string(),
+      })
+    );
     try {
       const data = JSON.parse(content);
       const infos = schema.safeParse(data);
 
       if (!infos.success) {
         console.error(infos.error, thread.id, content);
+        return;
+      }
+
+      if (infos.data.error !== null) {
+        console.error(`thread with id ${thread.id} ignored because ${infos.data.error}`);
         return;
       }
       try {
@@ -75,7 +85,7 @@ async function main() {
             threadId: thread.id,
             title: infos.data.title,
             summary: infos.data.summery,
-            tags: infos.data.tags,
+            tags: infos.data.tags.map(tag => tag.toLowerCase()),
           },
         });
 

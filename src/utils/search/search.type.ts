@@ -1,6 +1,9 @@
-import type { XSubject } from "@prisma/client";
-
 export type SearchResult = {
   youtubeVideos: string[];
-  xPosts: XSubject[];
+  xPosts: PostInfos[];
+}
+
+export type PostInfos = {
+  title: string;
+  url: string;
 }

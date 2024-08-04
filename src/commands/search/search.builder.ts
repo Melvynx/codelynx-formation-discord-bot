@@ -10,7 +10,7 @@ export const searchSlashBuilder = new SlashCmdBuilder()
     .setMinLength(10)
     .setMaxLength(100)
     .setRequired(true)
-    .setName("Query")
+    .setName("query")
     .setDescription("thing what you search")
     .setDescriptionLocalization("fr", "la chose que vous cherchez"));
 

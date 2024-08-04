@@ -10,9 +10,9 @@ import { OpenAIError } from "../error/openai_error.class";
 import { prisma } from "../prisma/prisma.util";
 import { generateId } from "../id/id.util";
 
-const client = new OpenAI();
+const openAIClient = new OpenAI();
 
-const log = new ArcLogger("search");
+export const searchLog = new ArcLogger("search");
 
 export const cleanSearch = async(text: string): Promise<Result<string, BaseError>> => {
   const messages: ChatCompletionMessageParam[] = [
@@ -28,7 +28,7 @@ export const cleanSearch = async(text: string): Promise<Result<string, BaseError
   try {
 
 
-    const response = await client.chat.completions.create({
+    const response = await openAIClient.chat.completions.create({
       model: "gpt-4o",
       messages: messages,
     });
@@ -61,7 +61,7 @@ export const cleanSearch = async(text: string): Promise<Result<string, BaseError
         },
       });
     } catch (err) {
-      log.error("failed update db for search clean", [anyToError(err).message]);
+      searchLog.error("failed update db for search clean", [anyToError(err).message]);
     }
     return ok(clean);
 

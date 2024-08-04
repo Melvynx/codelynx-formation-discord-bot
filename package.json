@@ -22,7 +22,8 @@
 		"openai": "^4.53.2",
 		"prisma": "^5.15.1",
 		"typescript": "^5.4.5",
-		"zod": "^3.23.8"
+		"zod": "^3.23.8",
+		"zod-to-json-schema": "^3.23.2"
 	},
 	"devDependencies": {
 		"@arcoz/eslint-config": "^1.1.0",

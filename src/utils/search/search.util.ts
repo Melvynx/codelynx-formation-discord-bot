@@ -3,12 +3,13 @@ import type { Result } from "arcscord";
 import { ok } from "arcscord";
 import { ArcLogger } from "arcscord";
 import { anyToError, BaseError, error } from "arcscord";
-import type { SearchResult } from "./search.type";
+import type { PostInfos, SearchResult } from "./search.type";
 import type { ChatCompletionMessageParam } from "openai/resources";
 import { cleanPrompt } from "./search.const";
 import { OpenAIError } from "../error/openai_error.class";
 import { prisma } from "../prisma/prisma.util";
 import { generateId } from "../id/id.util";
+import { searchX } from "./x/x.util";
 
 const openAIClient = new OpenAI();
 
@@ -83,9 +84,37 @@ export const search = async(searchTerm: string, cleanSearchingTerm = false): Pro
     }
     searchTerm = clean;
   }
+  const [ids, err] = await searchX(searchTerm);
+  if (err) {
+    return error(err);
+  }
 
+  const threads = await prisma.xSubject.findMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+    include: {
+      Thread: true,
+      InitalPost: true,
+    },
+  });
+
+  const cleanThreads: PostInfos[] = [];
+  for (const id of ids) {
+    const thread = threads.find((thread) => thread.id === id);
+    if (!thread) {
+      continue;
+    }
+
+    cleanThreads.push({
+      title: thread.title,
+      url: thread.InitalPost.url,
+    });
+  }
   return ok({
     youtubeVideos: [],
-    xPosts: [],
+    xPosts: cleanThreads,
   });
 };

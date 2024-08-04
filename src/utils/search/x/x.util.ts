@@ -1,11 +1,8 @@
 import type { Result } from "arcscord";
-import { anyToError } from "arcscord";
-import { error } from "arcscord";
-import { ok } from "arcscord";
+import { anyToError, error, ok } from "arcscord";
 import { OpenAIError } from "../../error/openai_error.class";
 import OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources";
-import { Chat } from "openai/resources";
 import { responseSchema, searchPrompt } from "./x.const";
 import type { ChatCompletionMessageToolCall, ChatCompletionTool } from "openai/src/resources/chat/completions";
 import { searchWitTitle } from "./functions/search_with_title";
@@ -13,10 +10,10 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 import { searchWithTags } from "./functions/search_with_tags";
 import { searchWithSummary } from "./functions/search_with_sumary";
 import { search } from "./functions/search";
-import ChatCompletion = Chat.ChatCompletion;
 import { prisma } from "../../prisma/prisma.util";
 import { generateId } from "../../id/id.util";
 import { searchLog } from "../search.util";
+import Chat = OpenAI.Chat;
 
 const client = new OpenAI();
 
@@ -61,7 +58,7 @@ const executeFunction = async(call: ChatCompletionMessageToolCall.Function): Pro
   }
 };
 
-const pushToDB = async(completion: ChatCompletion, messages: ChatCompletionMessageParam[]) => {
+const pushToDB = async(completion: Chat.ChatCompletion, messages: ChatCompletionMessageParam[]) => {
   try {
     await prisma.xPrompt.create({
       data: {
@@ -154,8 +151,6 @@ export const searchX = async(term: string): Promise<Result<string[], OpenAIError
       messages.push(message);
       for (const toolCall of message.tool_calls) {
         const response = await executeFunction(toolCall.function);
-        console.log(toolCall.function.name, toolCall.function.arguments);
-        console.log(response);
         messages.push({
           role: "tool",
           // eslint-disable-next-line camelcase

@@ -12,6 +12,7 @@
 		"db:migrate": "prisma migrate dev"
 	},
 	"dependencies": {
+		"@googleapis/youtube": "^19.0.0",
 		"@prisma/client": "5.15.1",
 		"@sapphire/snowflake": "^3.5.3",
 		"@types/node": "^20.12.12",

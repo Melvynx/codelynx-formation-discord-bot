@@ -10,6 +10,7 @@ import { OpenAIError } from "../error/openai_error.class";
 import { prisma } from "../prisma/prisma.util";
 import { generateId } from "../id/id.util";
 import { searchX } from "./x/x.util";
+import { youtubeSearch } from "./youtube/youtube.util";
 
 const openAIClient = new OpenAI();
 
@@ -113,8 +114,12 @@ export const search = async(searchTerm: string, cleanSearchingTerm = false): Pro
       url: thread.InitalPost.url,
     });
   }
+  const [video, err2] = await youtubeSearch(searchTerm);
+  if (err2) {
+    return error(err2);
+  }
   return ok({
-    youtubeVideos: [],
+    youtubeVideos: video,
     xPosts: cleanThreads,
   });
 };

@@ -69,7 +69,8 @@ export class SearchCommand extends Command implements SlashCommand, MessageComma
       return this.editReply(ctx, "Pas de résultats");
     }
     return this.editReply(ctx, {
-      content: `trouvé : [${result.xPosts[0].title}](${result.xPosts[0].url})`,
+      content: `trouvé : X : [${result.xPosts[0].title}](${result.xPosts[0].url})`
+      + `\nYoutube : ${result.youtubeVideos[0]}`,
     });
   }
 

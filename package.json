@@ -5,9 +5,9 @@
 	"scripts": {
 		"dev": "npx nodemon --exec node --import=@swc-node/register/esm-register ./src/index.ts dev debug",
 		"start": "node -r @swc-node/register/esm -r tsconfig-paths/register ./src/index.ts",
-		"script:import_from_tweetsjs": "npx nodemon --exec node --import=@swc-node/register/esm-register ./script/import_from_tweetsjs/index.ts dev script",
-		"script:load_thread_content": "npx nodemon --exec node --import=@swc-node/register/esm-register ./script/load_thread_content/index.ts dev script",
-		"script:load_subject": "npx nodemon --exec node --import=@swc-node/register/esm-register ./script/load_subject/index.ts dev script",
+		"script:import_from_tweetsjs": "node --import=@swc-node/register/esm-register ./script/import_from_tweetsjs/index.ts dev script",
+		"script:load_thread_content": " node --import=@swc-node/register/esm-register ./script/load_thread_content/index.ts dev script",
+		"script:load_subject": "node --import=@swc-node/register/esm-register ./script/load_subject/index.ts dev script",
 		"db:gen": "prisma generate",
 		"db:migrate": "prisma migrate dev"
 	},

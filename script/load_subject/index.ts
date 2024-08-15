@@ -4,9 +4,9 @@ import OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources";
 import { z } from "zod";
 
-const promptV0 = `Hello, im a code that sort threads, your mission is to give a title, a summery and tags for X threads of a web developper. If the thread is not in french, reply only with {"error": "NOFRENCH"}, else reply in json in this format : {
+const promptV0 = `Hello, im a code that sort threads, your mission is to give a title, a summary and tags for X threads of a web developper. If the thread is not in french, reply only with {"error": "NOFRENCH"}, else reply in json in this format : {
   "title": string, // a short and accurate title
-  "summery": string, // a text that summary the thread. Only the tweet content, not say like "developer post a thread explain" but summary of the thread self
+  "summary": string, // a text that summary the thread. Only the tweet content, not say like "this thread explain of..." or "this thread present ..." but only the summary of the thread content self
   "tags": string[], //tags in french in lower case
   "error": null, // null or "NOFRENCH"
 }
@@ -36,7 +36,7 @@ async function main(): Promise<void> {
       },
     ];
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4o",
       messages: messages,
       "response_format": {
         type: "json_object",
@@ -51,7 +51,7 @@ async function main(): Promise<void> {
 
     const schema = z.object({
       title: z.string(),
-      summery: z.string(),
+      summary: z.string(),
       tags: z.array(z.string()),
       error: z.null(),
     }).or(
@@ -79,7 +79,7 @@ async function main(): Promise<void> {
             postId: thread.id,
             threadId: thread.id,
             title: infos.data.title,
-            summary: infos.data.summery,
+            summary: infos.data.summary,
             tags: infos.data.tags.map(tag => tag.toLowerCase()),
           },
         });

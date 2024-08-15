@@ -4,18 +4,16 @@ import OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources";
 import { z } from "zod";
 
-// eslint-disable-next-line max-len
 const promptV0 = `Hello, im a code that sort threads, your mission is to give a title, a summery and tags for X threads of a web developper. If the thread is not in french, reply only with {"error": "NOFRENCH"}, else reply in json in this format : {
-  "title": string,
-  "summery": string,
-  "tags": string[],
-  "error": null,
+  "title": string, // a short and accurate title
+  "summery": string, // a text that summary the thread. Only the tweet content, not say like "developer post a thread explain" but summary of the thread self
+  "tags": string[], //tags in french in lower case
+  "error": null, // null or "NOFRENCH"
 }
 reply only with json object`;
 
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-async function main() {
+async function main(): Promise<void> {
   const start = Date.now();
   const prisma = new PrismaClient();
 
@@ -26,8 +24,7 @@ async function main() {
 
   const threads = rawThreads.filter((thread) => subjects.findIndex((subject) => subject.threadId === thread.id) === -1);
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  const loadSubject = async(thread: XThread, repeat = 0) => {
+  const loadSubject = async(thread: XThread, repeat = 0): Promise<void> => {
     const messages: ChatCompletionMessageParam[] = [
       {
         role: "system",
@@ -41,8 +38,7 @@ async function main() {
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: messages,
-      // eslint-disable-next-line camelcase
-      response_format: {
+      "response_format": {
         type: "json_object",
       },
     });
@@ -64,8 +60,7 @@ async function main() {
       })
     );
     try {
-      const data = JSON.parse(content);
-      const infos = schema.safeParse(data);
+      const infos = schema.safeParse(JSON.parse(content));
 
       if (!infos.success) {
         console.error(infos.error, thread.id, content);

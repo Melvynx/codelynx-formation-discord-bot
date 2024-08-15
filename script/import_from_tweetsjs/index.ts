@@ -21,8 +21,7 @@ type TweetInfos = {
   type: XPostType;
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-async function main() {
+async function main(): Promise<void> {
   const start = Date.now();
 
   const body = fs.readFileSync("./tweets.internal.json").toString();
@@ -81,7 +80,8 @@ async function main() {
   const dbThread: XThread[] = [];
 
   for (const tweet of sortedTweets) {
-    if (tweet.tweet.in_reply_to_status_id_str && sortedTweets.find((t) => t.tweet.id === tweet.tweet.in_reply_to_status_id_str)) {
+    if (tweet.tweet.in_reply_to_status_id_str
+      && sortedTweets.find((t) => t.tweet.id === tweet.tweet.in_reply_to_status_id_str)) {
 
       const threadId = threadsIds.get(tweet.tweet.in_reply_to_status_id_str) || tweet.tweet.in_reply_to_status_id_str;
 

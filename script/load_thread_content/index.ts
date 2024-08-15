@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-async function main() {
+async function main(): Promise<void> {
 
   const start = Date.now();
 

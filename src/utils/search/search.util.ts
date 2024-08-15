@@ -14,6 +14,8 @@ import { youtubeSearch } from "./youtube/youtube.util";
 
 const openAIClient = new OpenAI();
 
+const results = new Map<string, SearchResult>();
+
 export const searchLog = new ArcLogger("search");
 
 export const cleanSearch = async(text: string): Promise<Result<string, BaseError>> => {
@@ -118,8 +120,18 @@ export const search = async(searchTerm: string, cleanSearchingTerm = false): Pro
   if (err2) {
     return error(err2);
   }
-  return ok({
+
+  const result: SearchResult = {
     youtubeVideos: video,
     xPosts: cleanThreads,
-  });
+    id: generateId(),
+  };
+
+  results.set(result.id, result);
+
+  return ok(result);
+};
+
+export const getResults = (id: string): SearchResult|undefined => {
+  return results.get(id);
 };

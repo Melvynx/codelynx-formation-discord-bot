@@ -1,6 +1,9 @@
+import type { VideoInfo } from "./youtube/youtube.type";
+
 export type SearchResult = {
-  youtubeVideos: string[];
+  youtubeVideos: VideoInfo[];
   xPosts: PostInfos[];
+  id: string;
 }
 
 export type PostInfos = {

@@ -26,6 +26,7 @@ export const youtubeSearch = async(term: string): Promise<Result<VideoInfo[], Ba
         url: "https://www.youtube.com/watch?v=" + l.id?.videoId,
         id: l.id?.videoId || "no_id",
         title: l.snippet?.title || "no_title",
+        media: l.snippet?.thumbnails?.standard?.url || undefined,
       };
       return info;
     }));

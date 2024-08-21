@@ -92,7 +92,7 @@ export class EmailInputModal extends ModalSubmitComponent {
     }
 
     const roles: string[] = [
-      env.VERIFY_ROLE_1,
+      env.VERIFY_ROLE,
     ];
 
     for (const product of user.products) {

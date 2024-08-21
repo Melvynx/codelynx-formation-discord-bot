@@ -9,6 +9,6 @@ export const envSchema = z.object({
   OPENAI_API_KEY: z.string(),
   CODELINE_ENDPOINT: z.string(),
   CODELINE_TOKEN: z.string(),
-  VERIFY_ROLE_1: z.string(),
-  VERIFY_ROLE_2: z.string(),
+  VERIFY_ROLE: z.string(),
+  LYNX_ROLE: z.string(),
 });

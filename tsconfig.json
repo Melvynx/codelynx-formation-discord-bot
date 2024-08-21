@@ -7,6 +7,9 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "moduleResolution": "Node"
+    "moduleResolution": "Node",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   }
 }

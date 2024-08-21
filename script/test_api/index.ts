@@ -10,12 +10,12 @@ const usersMap = new Map([
           {
             id: "6erjf21",
             title: "Product 1",
-            discordRoleId: "1274803816579072010",
+            discordRoleId: "1275843832155607077",
           },
           {
             id: "iu34jk",
             title: "Product 2",
-            discordRoleId: "pq34ht",
+            discordRoleId: "1275843832155607078",
           },
         ],
       },
@@ -30,7 +30,7 @@ const usersMap = new Map([
           {
             id: "28ehf4",
             title: "Product 1",
-            discordRoleId: "1274803816579072010",
+            discordRoleId: "1275843832155607077",
           },
         ],
       },
@@ -45,17 +45,17 @@ const usersMap = new Map([
           {
             id: "3dk291",
             title: "Product 2",
-            discordRoleId: "1274803850133377095",
+            discordRoleId: "1275843832155607078",
           },
           {
             id: "as83dj",
             title: "Product 3",
-            discordRoleId: "1274803884124012596",
+            discordRoleId: "1275843832155607079",
           },
           {
             id: "y9fh84",
             title: "Product 4",
-            discordRoleId: "1274803924628410482",
+            discordRoleId: "1275843832155607076",
           },
         ],
       },

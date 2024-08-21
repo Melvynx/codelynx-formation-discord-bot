@@ -84,7 +84,7 @@ app.get<{
     return void res.status(404).send({});
   }
 
-  void res.status(200).send({ user: user });
+  void res.status(200).send({ user: user.user });
 });
 
 app.patch<{

@@ -6,6 +6,7 @@ const envDTO = z.object({
   LINKS_CHANNEL_ID: z.string(),
   HELP_CHANNEL_ID: z.string(),
   SERVER_ID: z.string(),
+  APPLICATION_ID: z.string(),
   CODELINE_ENDPOINT: z.string(),
   CODELINE_TOKEN: z.string(),
 

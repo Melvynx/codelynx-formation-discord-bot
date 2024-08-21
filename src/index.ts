@@ -3,6 +3,7 @@ import { askNewUserEmailModule } from './modules/ask-new-user-email';
 import { helpChannelHandler } from './modules/helpChannel/handler';
 import { createLinkOnlyChannel } from './modules/link-only-channel';
 import { env } from './util/env';
+import { registerCommands } from './util/register-commands';
 
 const client = new Client({
   partials: [Partials.Channel, Partials.Message],
@@ -19,6 +20,8 @@ const client = new Client({
 client.on('ready', () => {
   console.log('ready !');
 });
+
+registerCommands();
 
 createLinkOnlyChannel(client);
 askNewUserEmailModule(client);

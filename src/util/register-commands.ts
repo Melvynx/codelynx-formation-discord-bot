@@ -1,6 +1,3 @@
-//TODO: DELETE ME
-//! Je laisse ce fichier pour que Chris ai les infos pour les retranscrire avec sont framework
-
 import {
   ApplicationCommandType,
   ContextMenuCommandBuilder,
@@ -15,20 +12,20 @@ export const commands = [
     .setType(ApplicationCommandType.Message)
     .setDMPermission(false),
 ];
-
 const rest = new REST().setToken(env.TOKEN);
 
-(async () => {
+export const registerCommands = async () => {
   try {
-    console.log('Registering Commands');
+    console.log('Registering Commands...');
 
     await rest.put(
-      Routes.applicationGuildCommands('877636097394475019', env.SERVER_ID),
+      Routes.applicationGuildCommands(env.APPLICATION_ID, env.SERVER_ID),
       { body: commands },
     );
 
     console.log('Successfully registering commands');
   } catch (e) {
+    console.error('Error occurred when registering commands');
     console.error(e);
   }
-})();
+};

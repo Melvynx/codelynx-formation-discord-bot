@@ -11,6 +11,7 @@ import {
 import { ModalSubmitComponent } from "arcscord";
 import { EMAIL_INPUT_ID, EMAIL_INPUT_TEXT_INPUT_ID } from "./email_input.builder";
 import type { GuildMember } from "discord.js";
+import { ChannelType } from "discord.js";
 import { EmbedBuilder } from "discord.js";
 import { getUSer } from "../../utils/api/codeline/codeline.util";
 import { env } from "../../utils/env/env.util";
@@ -109,13 +110,30 @@ export class EmailInputModal extends ModalSubmitComponent {
       }));
     }
 
+    try {
+      const channel = member.guild.channels.cache.get(env.WELCOME_CHANNEL);
+      if (!channel || channel.type !== ChannelType.GuildText) {
+        return error(new ModalSubmitError({
+          message: "failed to send welcome message, channel not found or invalid type",
+          interaction: ctx.interaction,
+          debugs: {
+            channelId: env.WELCOME_CHANNEL,
+            type: channel?.type,
+            except: ChannelType.GuildText,
+          },
+        }));
+      }
 
-    return this.editReply(ctx, {
-      embeds: [new EmbedBuilder()
-        .setTitle("Validé")
-        .setDescription("Votre compte à été validé !")
-        .setColor("Green")],
-    });
+      await channel.send(`Bienvenue, envoie une présentation dans <#${env.PRESENTATION_CHANNEL}> pour accéder au serveur.`);
+    } catch (e) {
+      return error(new ModalSubmitError({
+        message: "failed to send welcome message",
+        interaction: ctx.interaction,
+        baseError: anyToError(e),
+      }));
+    }
+
+    return ok(true);
   }
 
 }

@@ -11,4 +11,6 @@ export const envSchema = z.object({
   CODELINE_TOKEN: z.string(),
   VERIFY_ROLE: z.string(),
   LYNX_ROLE: z.string(),
+  PRESENTATION_CHANNEL: z.string(),
+  WELCOME_CHANNEL: z.string(),
 });

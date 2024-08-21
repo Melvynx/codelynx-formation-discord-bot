@@ -13,7 +13,7 @@ import { EMAIL_INPUT_ID, EMAIL_INPUT_TEXT_INPUT_ID } from "./email_input.builder
 import type { GuildMember } from "discord.js";
 import { ChannelType } from "discord.js";
 import { EmbedBuilder } from "discord.js";
-import { getUSer } from "../../utils/api/codeline/codeline.util";
+import { getUSer, updateUserId } from "../../utils/api/codeline/codeline.util";
 import { env } from "../../utils/env/env.util";
 
 export class EmailInputModal extends ModalSubmitComponent {
@@ -133,6 +133,7 @@ export class EmailInputModal extends ModalSubmitComponent {
       }));
     }
 
+    void updateUserId(email, ctx.interaction.user.id);
     return ok(true);
   }
 

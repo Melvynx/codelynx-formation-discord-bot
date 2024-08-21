@@ -7,4 +7,9 @@ export const envSchema = z.object({
   DATABASE_URL: z.string(),
   GOOGLE_API_KEY: z.string(),
   OPENAI_API_KEY: z.string(),
+  CODELINE_ENDPOINT: z.string(),
+  CODELINE_TOKEN: z.string(),
+  PRESENTATION_CHANNEL: z.string(),
+  VERIFY_ROLE_1: z.string(),
+  VERIFY_ROLE_2: z.string(),
 });

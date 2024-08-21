@@ -8,6 +8,7 @@
 		"script:import_from_tweetsjs": "node --import=@swc-node/register/esm-register ./script/import_from_tweetsjs/index.ts dev script",
 		"script:load_thread_content": " node --import=@swc-node/register/esm-register ./script/load_thread_content/index.ts dev script",
 		"script:load_subject": "node --import=@swc-node/register/esm-register ./script/load_subject/index.ts dev script",
+		"script:api": "node --import=@swc-node/register/esm-register ./script/test_api/index.ts dev script",
 		"db:gen": "prisma generate",
 		"db:migrate": "prisma migrate dev"
 	},
@@ -31,6 +32,7 @@
 		"@swc-node/core": "^1.13.0",
 		"@swc-node/register": "^1.9.0",
 		"@types/node": "^20.12.7",
+		"fastify": "^4.28.1",
 		"nodemon": "^3.1.0",
 		"tsconfig-paths": "^4.2.0",
 		"tsx": "^4.15.5",

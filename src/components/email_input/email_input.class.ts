@@ -9,8 +9,7 @@ import {
   ModalSubmitError
 } from "arcscord";
 import { ModalSubmitComponent } from "arcscord";
-import { EMAIL_INPUT_ID } from "./email_input.builder";
-import { NEW_LINK_THREAD_NAME_TEXT_ID } from "../new_link_thread_name/new_link_thread_name.builder";
+import { EMAIL_INPUT_ID, EMAIL_INPUT_TEXT_INPUT_ID } from "./email_input.builder";
 import type { GuildMember } from "discord.js";
 import { EmbedBuilder } from "discord.js";
 import { getUSer } from "../../utils/api/codeline/codeline.util";
@@ -30,7 +29,7 @@ export class EmailInputModal extends ModalSubmitComponent {
   async run(ctx: ModalSubmitRunContext): Promise<ModalSubmitRunResult> {
     let email = "";
     try {
-      email = ctx.interaction.fields.getTextInputValue(NEW_LINK_THREAD_NAME_TEXT_ID);
+      email = ctx.interaction.fields.getTextInputValue(EMAIL_INPUT_TEXT_INPUT_ID);
     } catch (e) {
       return error(new ModalSubmitError({
         interaction: ctx.interaction,

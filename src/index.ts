@@ -1,5 +1,5 @@
 import { ArcClient } from "arcscord";
-import { SolutionCommand } from "./commands/help/solution.class";
+import { SolutionCommand } from "./commands/solution/solution.class";
 import { SearchCommand } from "./commands/search/search.class";
 import { NewLinkThreadName } from "./components/new_link_thread_name/new_link_thread_name.class";
 import { RenameLinkThread } from "./components/rename_link_thread/rename_link_thread.class";
@@ -23,12 +23,12 @@ client.componentManager.loadComponents([
   new NewLinkThreadName(client),
   new RenameLinkThread(client),
 ]);
-client.on("ready", async () => {
+client.on("ready", async() => {
   const commands = [new SearchCommand(client), new SolutionCommand(client)];
   const data = client.commandManager.loadCommands(commands);
   const apisCommands = await client.commandManager.pushGuildCommands(
     env.SERVER_ID,
-    data,
+    data
   );
   client.commandManager.resolveCommands(commands, apisCommands);
 });

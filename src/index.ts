@@ -4,6 +4,7 @@ import { SearchCommand } from "./commands/search/search.class";
 import { NewLinkThreadName } from "./components/new_link_thread_name/new_link_thread_name.class";
 import { RenameLinkThread } from "./components/rename_link_thread/rename_link_thread.class";
 import { AutoTreads } from "./events/auto_threads/auto_threads.class";
+import { SolutionCreateThread } from "./events/solution/createThreadSolution.class";
 import { env } from "./utils/env/env.util";
 
 const client = new ArcClient(env.TOKEN, {
@@ -16,7 +17,8 @@ const client = new ArcClient(env.TOKEN, {
   ],
 });
 
-void client.eventManager.loadEvent(new AutoTreads(client));
+const events = [new AutoTreads(client), new SolutionCreateThread(client)];
+void client.eventManager.loadEvents(events);
 client.componentManager.loadComponents([
   new NewLinkThreadName(client),
   new RenameLinkThread(client),

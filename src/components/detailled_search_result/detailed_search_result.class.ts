@@ -1,9 +1,14 @@
 import type { ButtonRunContext } from "arcscord";
-import { ButtonError, error } from "arcscord";
-import { anyToError, BaseError } from "arcscord";
-import { CUSTOM_ID_SEPARATOR } from "arcscord";
-import { ok } from "arcscord";
-import { Button, type ButtonRunResult } from "arcscord";
+import {
+  anyToError,
+  BaseError,
+  Button,
+  ButtonError,
+  type ButtonRunResult,
+  CUSTOM_ID_SEPARATOR,
+  error,
+  ok
+} from "arcscord";
 import { DETAILED_SEARCH_RESULT_ID, detailedSearchResultBuilder } from "./detailed_search_result.builder";
 import { getResults } from "../../utils/search/search.util";
 import type { ButtonBuilder } from "discord.js";

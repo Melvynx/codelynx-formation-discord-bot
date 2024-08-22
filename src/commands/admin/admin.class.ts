@@ -1,7 +1,8 @@
 import type {
   ArcClient,
   CommandRunContext,
-  CommandRunResult, SlashCmdBuilder,
+  CommandRunResult,
+  SlashCmdBuilder,
   SlashCommandWithSubs,
   SubSlashCommandList
 } from "arcscord";

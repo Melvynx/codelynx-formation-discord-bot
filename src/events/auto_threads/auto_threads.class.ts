@@ -1,9 +1,7 @@
 import type { EventHandleResult } from "arcscord";
 import { anyToError, defaultLogger, error, Event, EventError, ok } from "arcscord";
 import type { ButtonBuilder, Message } from "discord.js";
-import { ActionRowBuilder } from "discord.js";
-import { ThreadAutoArchiveDuration } from "discord.js";
-import { ChannelType } from "discord.js";
+import { ActionRowBuilder, ChannelType, ThreadAutoArchiveDuration } from "discord.js";
 import { env } from "../../utils/env/env.util";
 import { parseTitle } from "./auto_threads.util";
 import { renameLinkThreadBuilder } from "../../components/rename_link_thread/rename_link_thread.builder";

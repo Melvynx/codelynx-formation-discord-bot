@@ -1,8 +1,5 @@
 import type { ButtonRunContext, ButtonRunResult } from "arcscord";
-import { anyToError } from "arcscord";
-import { ButtonError } from "arcscord";
-import { error,  ok } from "arcscord";
-import { Button } from "arcscord";
+import { anyToError, Button, ButtonError, error, ok } from "arcscord";
 import { VERIFY_BUTTON_ID } from "./verify_button.builder";
 import { emailInputBuilder } from "../email_input/email_input.builder";
 

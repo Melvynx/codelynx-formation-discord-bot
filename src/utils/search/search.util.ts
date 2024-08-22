@@ -1,8 +1,6 @@
 import OpenAI from "openai";
 import type { Result } from "arcscord";
-import { ok } from "arcscord";
-import { ArcLogger } from "arcscord";
-import { anyToError, BaseError, error } from "arcscord";
+import { anyToError, ArcLogger, BaseError, error, ok } from "arcscord";
 import type { PostInfos, SearchResult } from "./search.type";
 import type { ChatCompletionMessageParam } from "openai/resources";
 import { cleanPrompt } from "./search.const";

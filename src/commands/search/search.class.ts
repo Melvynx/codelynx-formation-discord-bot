@@ -1,14 +1,5 @@
-import type {
-  CommandRunContext, CommandRunResult,
-  MessageCommand,
-  SlashCommand
-} from "arcscord";
-import {
-  CommandError, error
-} from "arcscord";
-import {
-  Command
-} from "arcscord";
+import type { CommandRunContext, CommandRunResult, MessageCommand, SlashCommand } from "arcscord";
+import { Command, CommandError, error } from "arcscord";
 import { searchMessageBuilder, searchSlashBuilder } from "./search.builder";
 import type { SearchResult } from "../../utils/search/search.type";
 import { search } from "../../utils/search/search.util";

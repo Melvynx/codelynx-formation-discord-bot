@@ -1,8 +1,7 @@
 import { youtube } from "@googleapis/youtube";
 import { env } from "../../env/env.util";
 import type { Result } from "arcscord";
-import { anyToError, BaseError, error } from "arcscord";
-import { ok } from "arcscord";
+import { anyToError, BaseError, error, ok } from "arcscord";
 import type { VideoInfo } from "./youtube.type";
 
 const client = youtube({

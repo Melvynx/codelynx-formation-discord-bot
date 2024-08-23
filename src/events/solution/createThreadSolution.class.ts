@@ -1,8 +1,7 @@
 import { env } from "@/utils/env/env.util";
 import type { EventHandleResult } from "arcscord";
-import { ok } from "arcscord";
-import { Event } from "arcscord";
-import { ChannelType, EmbedBuilder, type AnyThreadChannel } from "discord.js";
+import { Event, ok } from "arcscord";
+import { type AnyThreadChannel, ChannelType, EmbedBuilder } from "discord.js";
 
 export class SolutionCreateThread extends Event<"threadCreate"> {
 

@@ -32,7 +32,7 @@ const executeFunction = async(call: ChatCompletionMessageToolCall.Function): Pro
   }
 };
 
-const pushToDB = async(completion: Chat.ChatCompletion, messages: ChatCompletionMessageParam[]) => {
+const pushToDB = async(completion: Chat.ChatCompletion, messages: ChatCompletionMessageParam[]): Promise<void> => {
   try {
     await prisma.xPrompt.create({
       data: {

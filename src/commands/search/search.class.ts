@@ -1,11 +1,11 @@
 import type { CommandRunContext, CommandRunResult, MessageCommand, SlashCommand } from "arcscord";
 import { Command, CommandError, error } from "arcscord";
 import { searchMessageBuilder, searchSlashBuilder } from "./search.builder";
-import type { SearchResult } from "../../utils/search/search.type";
-import { search } from "../../utils/search/search.util";
+import type { SearchResult } from "@/utils/search/search.type";
+import { search } from "@/utils/search/search.util";
 import type { ButtonBuilder } from "discord.js";
 import { ActionRowBuilder, EmbedBuilder } from "discord.js";
-import { detailedSearchResultBuilder } from "../../components/detailled_search_result/detailed_search_result.builder";
+import { detailedSearchResultBuilder } from "@/components/detailled_search_result/detailed_search_result.builder";
 
 export class SearchCommand extends Command implements SlashCommand, MessageCommand {
 

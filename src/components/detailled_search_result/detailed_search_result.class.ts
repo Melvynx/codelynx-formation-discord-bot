@@ -10,7 +10,7 @@ import {
   ok
 } from "arcscord";
 import { DETAILED_SEARCH_RESULT_ID, detailedSearchResultBuilder } from "./detailed_search_result.builder";
-import { getResults } from "../../utils/search/search.util";
+import { getResults } from "@/utils/search/search.util";
 import type { ButtonBuilder } from "discord.js";
 import { ActionRowBuilder, EmbedBuilder } from "discord.js";
 

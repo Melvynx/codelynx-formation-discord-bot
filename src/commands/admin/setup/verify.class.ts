@@ -2,7 +2,7 @@ import type { CommandRunContext, CommandRunResult } from "arcscord";
 import { CommandError, error, SubCommand } from "arcscord";
 import type { ButtonBuilder } from "discord.js";
 import { ActionRowBuilder, EmbedBuilder } from "discord.js";
-import { verifyButtonBuilder } from "../../../components/verify_button/verify_button.builder";
+import { verifyButtonBuilder } from "@/components/verify_button/verify_button.builder";
 
 export class SetupVerifySubCommand extends SubCommand {
 

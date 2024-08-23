@@ -1,6 +1,6 @@
 import type { GPTFunction } from "../x.type";
 import { z } from "zod";
-import { prisma } from "../../../prisma/prisma.util";
+import { prisma } from "@/utils/prisma/prisma.util";
 import { sqlQuery } from "./search_x.const";
 import { searchLog } from "../../search.util";
 import { anyToError } from "arcscord";

@@ -77,7 +77,10 @@ export const cleanSearch = async(text: string): Promise<Result<string, BaseError
 };
 
 
-export const search = async(searchTerm: string, cleanSearchingTerm = false): Promise<Result<SearchResult, BaseError>> => {
+export const search = async(
+  searchTerm: string,
+  cleanSearchingTerm = false
+): Promise<Result<SearchResult, BaseError>> => {
   if (cleanSearchingTerm) {
     const [clean, err] = await cleanSearch(searchTerm);
     if (err) {

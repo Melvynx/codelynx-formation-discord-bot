@@ -27,7 +27,7 @@ export class AutoTreads extends Event<"messageCreate"> {
         return await this.linkChannel(message);
       }
 
-      case env.PRESENTATION_CHANNEL: {
+      case env.PRESENTATION_CHANNEL_ID: {
         return await this.presentation(message);
       }
 
@@ -170,8 +170,8 @@ export class AutoTreads extends Event<"messageCreate"> {
     }
 
     try {
-      await message.member?.roles.add(env.LYNX_ROLE);
-      await message.member?.roles.remove(env.VERIFY_ROLE);
+      await message.member?.roles.add(env.LYNX_ROLE_ID);
+      await message.member?.roles.remove(env.VERIFY_ROLE_ID);
     } catch (e) {
       return error(new EventError({
         event: this,

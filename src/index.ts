@@ -1,6 +1,5 @@
 import { ArcClient } from "arcscord";
 import { SolutionCommand } from "./commands/solution/solution.class";
-import { SearchCommand } from "./commands/search/search.class";
 import { NewLinkThreadName } from "./components/new_link_thread_name/new_link_thread_name.class";
 import { RenameLinkThread } from "./components/rename_link_thread/rename_link_thread.class";
 import { AutoTreads } from "./events/auto_threads/auto_threads.class";

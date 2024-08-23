@@ -13,10 +13,8 @@ export const envSchema = z.object({
 
   LINKS_CHANNEL_ID: z.string(),
   HELP_CHANNEL_ID: z.string(),
-  PRESENTATION_CHANNEL: z.string(),
-  WELCOME_CHANNEL: z.string(),
-
-  MODERATOR_ROLE_ID: z.string(),
+  PRESENTATION_CHANNEL_ID: z.string(),
+  WELCOME_CHANNEL_ID: z.string(),
   VERIFY_ROLE_ID: z.string(),
   LYNX_ROLE_ID: z.string(),
 

@@ -83,7 +83,7 @@ export class EmailInputModal extends ModalSubmitComponent {
     }
 
     const roles: string[] = [
-      env.VERIFY_ROLE,
+      env.VERIFY_ROLE_ID,
     ];
 
     for (const product of user.products) {
@@ -91,7 +91,7 @@ export class EmailInputModal extends ModalSubmitComponent {
     }
 
     try {
-      await this.editReply(ctx, `Vérification effectué avec succès. La suite dans <#${env.WELCOME_CHANNEL}> !`);
+      await this.editReply(ctx, `Vérification effectué avec succès. La suite dans <#${env.WELCOME_CHANNEL_ID}> !`);
       await member.roles.add(roles);
     } catch (e) {
       return error(new ModalSubmitError({
@@ -102,20 +102,20 @@ export class EmailInputModal extends ModalSubmitComponent {
     }
 
     try {
-      const channel = member.guild.channels.cache.get(env.WELCOME_CHANNEL);
+      const channel = member.guild.channels.cache.get(env.WELCOME_CHANNEL_ID);
       if (!channel || channel.type !== ChannelType.GuildText) {
         return error(new ModalSubmitError({
           message: "failed to send welcome message, channel not found or invalid type",
           interaction: ctx.interaction,
           debugs: {
-            channelId: env.WELCOME_CHANNEL,
+            channelId: env.WELCOME_CHANNEL_ID,
             type: channel?.type,
             except: ChannelType.GuildText,
           },
         }));
       }
 
-      await channel.send(`Bienvenue ${ctx.interaction.user.toString()}, envoie une présentation dans <#${env.PRESENTATION_CHANNEL}> pour accéder au serveur.`);
+      await channel.send(`Bienvenue ${ctx.interaction.user.toString()}, envoie une présentation dans <#${env.PRESENTATION_CHANNEL_ID}> pour accéder au serveur.`);
     } catch (e) {
       return error(new ModalSubmitError({
         message: "failed to send welcome message",

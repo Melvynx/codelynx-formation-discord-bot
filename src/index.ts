@@ -1,3 +1,4 @@
+
 import { ArcClient } from "arcscord";
 import { SolutionCommand } from "./commands/solution/solution.class";
 import { NewLinkThreadName } from "./components/new_link_thread_name/new_link_thread_name.class";
@@ -11,7 +12,6 @@ import { AdminCommand } from "./commands/admin/admin.class";
 import { EmailInputModal } from "./components/email_input/email_input.class";
 import { VerifyButton } from "./components/verify_button/verify.button.class";
 
-
 const client = new ArcClient(env.TOKEN, {
   intents: [
     "Guilds",
@@ -20,8 +20,6 @@ const client = new ArcClient(env.TOKEN, {
     "GuildMembers",
     "DirectMessages",
   ],
-});
-
 const events = [new AutoTreads(client), new SolutionCreateThread(client)];
 void client.eventManager.loadEvents(events);
 client.componentManager.loadComponents([

@@ -91,6 +91,7 @@ export class EmailInputModal extends ModalSubmitComponent {
     }
 
     try {
+      await this.editReply(ctx, `Vérification effectué avec succès. La suite dans <#${env.WELCOME_CHANNEL}> !`);
       await member.roles.add(roles);
     } catch (e) {
       return error(new ModalSubmitError({
@@ -114,7 +115,7 @@ export class EmailInputModal extends ModalSubmitComponent {
         }));
       }
 
-      await channel.send(`Bienvenue, envoie une présentation dans <#${env.PRESENTATION_CHANNEL}> pour accéder au serveur.`);
+      await channel.send(`Bienvenue ${ctx.interaction.user.toString()}, envoie une présentation dans <#${env.PRESENTATION_CHANNEL}> pour accéder au serveur.`);
     } catch (e) {
       return error(new ModalSubmitError({
         message: "failed to send welcome message",

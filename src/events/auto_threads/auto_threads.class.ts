@@ -171,6 +171,7 @@ export class AutoTreads extends Event<"messageCreate"> {
 
     try {
       await message.member?.roles.add(env.LYNX_ROLE);
+      await message.member?.roles.remove(env.VERIFY_ROLE);
     } catch (e) {
       return error(new EventError({
         event: this,

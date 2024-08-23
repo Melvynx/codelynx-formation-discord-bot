@@ -48,7 +48,7 @@ export class DetailedSearchResult extends Button {
       .setImage(result.youtubeVideos[0]?.media || null);
     embed.addFields({
       name: "**X :**",
-      value: result.xPosts.map((post, index) => {
+      value: result.xPosts.slice(0, 5).map((post, index) => {
         return `**${index + 1} :** [${post.title}](${post.url})`;
       }).join("\n"),
     });

@@ -1,9 +1,7 @@
 import type { EventHandleResult } from "arcscord";
 import { anyToError, defaultLogger, error, Event, EventError, ok } from "arcscord";
 import type { ButtonBuilder, Message } from "discord.js";
-import { ActionRowBuilder } from "discord.js";
-import { ThreadAutoArchiveDuration } from "discord.js";
-import { ChannelType } from "discord.js";
+import { ActionRowBuilder, ChannelType, ThreadAutoArchiveDuration } from "discord.js";
 import { env } from "../../utils/env/env.util";
 import { parseTitle } from "./auto_threads.util";
 import { renameLinkThreadBuilder } from "../../components/rename_link_thread/rename_link_thread.builder";
@@ -19,10 +17,71 @@ export class AutoTreads extends Event<"messageCreate"> {
       return ok(true);
     }
 
-    if (message.guildId !== env.SERVER_ID || message.channelId !== env.LINKS_CHANNEL_ID) {
+    if (message.guildId !== env.SERVER_ID) {
       return ok(true);
     }
 
+    switch (message.channelId) {
+
+      case env.LINKS_CHANNEL_ID: {
+        return await this.linkChannel(message);
+      }
+
+      case env.PRESENTATION_CHANNEL: {
+        return await this.presentation(message);
+      }
+
+      default: {
+        return ok(true);
+      }
+    }
+
+  }
+
+  async sendInvalid(message: Message): Promise<EventHandleResult> {
+    try {
+      const msg = await message.reply("Votre message ne contient pas de lien, merci de"
+        + "répondre dans le fil en question et de supprimer votre message.");
+
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      setTimeout(async() => {
+        const content = message.content;
+
+        try {
+          await msg.delete();
+          await message.delete();
+        } catch (e) {
+          defaultLogger.logError(new EventError({
+            event: this,
+            message: "failed to auto delete invalid link warning",
+            baseError: anyToError(e),
+          }));
+        }
+
+        try {
+          await message.author.send(`Ton message a été supprimé. C'était : \n\n ${content}`);
+        } catch (e) {
+          defaultLogger.logError(new EventError({
+            event: this,
+            message: "failed to send invalid link message",
+            baseError: anyToError(e),
+          }));
+        }
+
+
+      }, 60 * 1000);
+
+      return ok("no-link");
+    } catch (e) {
+      return error(new EventError({
+        event: this,
+        message: "failed to send invalid link message",
+        baseError: anyToError(e),
+      }));
+    }
+  }
+
+  async linkChannel(message: Message): Promise<EventHandleResult> {
     if (message.channel.type !== ChannelType.GuildText) {
       return error(new EventError({
         event: this,
@@ -85,47 +144,43 @@ export class AutoTreads extends Event<"messageCreate"> {
 
   }
 
-  async sendInvalid(message: Message): Promise<EventHandleResult> {
+  async presentation(message: Message): Promise<EventHandleResult> {
+    if (message.channel.type !== ChannelType.GuildText) {
+      return error(new EventError({
+        event: this,
+        message: "invalid channel type for presentation channel",
+        debugs: {
+          get: message.channel.type,
+          except: ChannelType.GuildText,
+        },
+      }));
+    }
+
     try {
-      const msg = await message.reply("Votre message ne contient pas de lien, merci de"
-        + "répondre dans le fil en question et de supprimer votre message.");
-
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      setTimeout(async() => {
-        const content = message.content;
-
-        try {
-          await msg.delete();
-          await message.delete();
-        } catch (e) {
-          defaultLogger.logError(new EventError({
-            event: this,
-            message: "failed to auto delete invalid link warning",
-            baseError: anyToError(e),
-          }));
-        }
-
-        try {
-          await message.author.send(`Ton message a été supprimé. C'était : \n\n ${content}`);
-        } catch (e) {
-          defaultLogger.logError(new EventError({
-            event: this,
-            message: "failed to send invalid link message",
-            baseError: anyToError(e),
-          }));
-        }
-
-
-      }, 60 * 1000);
-
-      return ok("no-link");
+      await message.startThread({
+        name: `Bienvenue ${message.author.displayName} !`,
+        autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
+      });
     } catch (e) {
       return error(new EventError({
         event: this,
-        message: "failed to send invalid link message",
+        message: "failed to start thread",
         baseError: anyToError(e),
       }));
     }
+
+    try {
+      await message.member?.roles.add(env.LYNX_ROLE);
+      await message.member?.roles.remove(env.VERIFY_ROLE);
+    } catch (e) {
+      return error(new EventError({
+        event: this,
+        message: "failed to add lynx role",
+        baseError: anyToError(e),
+      }));
+    }
+
+    return ok("presentation-ok");
   }
 
 }

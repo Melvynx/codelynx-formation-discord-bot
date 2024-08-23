@@ -5,10 +5,7 @@ import OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources";
 import { responseSchema, searchPrompt } from "./x.const";
 import type { ChatCompletionMessageToolCall, ChatCompletionTool } from "openai/src/resources/chat/completions";
-import { searchWitTitle } from "./functions/search_with_title";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import { searchWithTags } from "./functions/search_with_tags";
-import { searchWithSummary } from "./functions/search_with_sumary";
 import { search } from "./functions/search";
 import { prisma } from "../../prisma/prisma.util";
 import { generateId } from "../../id/id.util";
@@ -21,29 +18,6 @@ const executeFunction = async(call: ChatCompletionMessageToolCall.Function): Pro
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const unsavedArgs = JSON.parse(call.arguments);
   switch (call.name) {
-    case searchWitTitle.name: {
-      const args = searchWitTitle.params.safeParse(unsavedArgs);
-      if (!args.success) {
-        return `{"error": "${args.error.message}"`;
-      }
-      return searchWitTitle.run(args.data);
-    }
-
-    case searchWithTags.name: {
-      const args = searchWithTags.params.safeParse(unsavedArgs);
-      if (!args.success) {
-        return `{"error": "${args.error.message}"`;
-      }
-      return searchWithTags.run(args.data);
-    }
-
-    case searchWithSummary.name: {
-      const args = searchWithSummary.params.safeParse(unsavedArgs);
-      if (!args.success) {
-        return `{"error": "${args.error.message}"`;
-      }
-      return searchWithSummary.run(args.data);
-    }
     case search.name: {
       const args = search.params.safeParse(unsavedArgs);
       if (!args.success) {
@@ -87,22 +61,6 @@ export const searchX = async(term: string): Promise<Result<string[], OpenAIError
         parameters: zodToJsonSchema(search.params),
       },
     },
-    /** {
-      type: "function",
-      function: {
-        name: searchWithTags.name,
-        description: searchWithTags.description,
-        parameters: zodToJsonSchema(searchWithTags.params),
-      },
-    },
-    {
-      type: "function",
-      function: {
-        name: searchWithSummary.name,
-        description: searchWithSummary.description,
-        parameters: zodToJsonSchema(searchWithSummary.params),
-      },
-    }, **/
   ];
 
   const messages: ChatCompletionMessageParam[] = [
@@ -120,15 +78,13 @@ export const searchX = async(term: string): Promise<Result<string[], OpenAIError
   while (i <= 6) {
 
     const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4o",
       messages: messages,
       tools: tools,
-      // eslint-disable-next-line camelcase
-      response_format: {
+      "response_format": {
         type: "json_object",
       },
-      // eslint-disable-next-line camelcase
-      tool_choice: i < 5 ? "auto" : "none",
+      "tool_choice": i < 5 ? "auto" : "none",
     });
 
     const message = completion.choices[0]?.message;
@@ -153,8 +109,7 @@ export const searchX = async(term: string): Promise<Result<string[], OpenAIError
         const response = await executeFunction(toolCall.function);
         messages.push({
           role: "tool",
-          // eslint-disable-next-line camelcase
-          tool_call_id: toolCall.id,
+          "tool_call_id": toolCall.id,
           content: response,
         });
       }

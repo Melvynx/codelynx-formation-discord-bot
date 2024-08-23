@@ -1,8 +1,6 @@
 import OpenAI from "openai";
 import type { Result } from "arcscord";
-import { ok } from "arcscord";
-import { ArcLogger } from "arcscord";
-import { anyToError, BaseError, error } from "arcscord";
+import { anyToError, ArcLogger, BaseError, error, ok } from "arcscord";
 import type { PostInfos, SearchResult } from "./search.type";
 import type { ChatCompletionMessageParam } from "openai/resources";
 import { cleanPrompt } from "./search.const";
@@ -10,8 +8,11 @@ import { OpenAIError } from "../error/openai_error.class";
 import { prisma } from "../prisma/prisma.util";
 import { generateId } from "../id/id.util";
 import { searchX } from "./x/x.util";
+import { youtubeSearch } from "./youtube/youtube.util";
 
 const openAIClient = new OpenAI();
+
+const results = new Map<string, SearchResult>();
 
 export const searchLog = new ArcLogger("search");
 
@@ -113,8 +114,22 @@ export const search = async(searchTerm: string, cleanSearchingTerm = false): Pro
       url: thread.InitalPost.url,
     });
   }
-  return ok({
-    youtubeVideos: [],
+  const [video, err2] = await youtubeSearch(searchTerm);
+  if (err2) {
+    return error(err2);
+  }
+
+  const result: SearchResult = {
+    youtubeVideos: video,
     xPosts: cleanThreads,
-  });
+    id: generateId(),
+  };
+
+  results.set(result.id, result);
+
+  return ok(result);
+};
+
+export const getResults = (id: string): SearchResult|undefined => {
+  return results.get(id);
 };

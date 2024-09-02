@@ -20,6 +20,7 @@ const client = new ArcClient(env.TOKEN, {
     "GuildMembers",
     "DirectMessages",
   ],
+});
 const events = [new AutoTreads(client), new SolutionCreateThread(client)];
 void client.eventManager.loadEvents(events);
 client.componentManager.loadComponents([

@@ -4,7 +4,7 @@ import type { User } from "./codeline.type";
 import { env } from "../../env/env.util";
 import { userSchema } from "./codeline.dto";
 
-export const getUSer = async(email: string): Promise<Result<User["user"]|null, BaseError>> => {
+export const getUser = async(email: string): Promise<Result<User["user"]|null, BaseError>> => {
 
   try {
 

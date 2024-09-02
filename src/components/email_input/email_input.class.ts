@@ -3,7 +3,7 @@ import { anyToError, error, ModalSubmitComponent, ModalSubmitError, ok } from "a
 import { EMAIL_INPUT_ID, EMAIL_INPUT_TEXT_INPUT_ID } from "./email_input.builder";
 import type { GuildMember } from "discord.js";
 import { ChannelType, EmbedBuilder } from "discord.js";
-import { getUSer, updateUserId } from "../../utils/api/codeline/codeline.util";
+import { getUser, updateUserId } from "../../utils/api/codeline/codeline.util";
 import { env } from "../../utils/env/env.util";
 
 export class EmailInputModal extends ModalSubmitComponent {
@@ -40,7 +40,7 @@ export class EmailInputModal extends ModalSubmitComponent {
       });
     }
 
-    const [user, err] = await getUSer(email);
+    const [user, err] = await getUser(email);
     if (err) {
       return error(new ModalSubmitError({
         message: "failed to get codeline error : " + err.message,

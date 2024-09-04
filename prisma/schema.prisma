@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model XPost {
+  id             String     @id
+  content        String
+  url            String
+  createAt       DateTime
+  fullJson       String
+  Thread         XThread?   @relation(fields: [threadId], references: [id])
+  threadId       String?
+  Subject        XSubject[]
+  type           XPostType
+  previousPostId String?
+  previousPost   XPost?     @relation("replyList", fields: [previousPostId], references: [id])
+  replys         XPost[]    @relation("replyList")
+}
+
+model XThread {
+  id          String     @id
+  posts       XPost[]
+  fullContent String
+  Subject     XSubject[]
+}
+
+model XSubject {
+  id         String    @id
+  Thread     XThread?  @relation(fields: [threadId], references: [id])
+  threadId   String?
+  InitalPost XPost     @relation(fields: [postId], references: [id])
+  postId     String
+  tags       String[]
+  title      String
+  summary    String
+  Prompt     XPrompt[]
+}
+
+model XPrompt {
+  id               String     @id
+  version          Int
+  send             String
+  result           String
+  sendTokenUsed    Int
+  receiveTokenUsed Int
+  subject          XSubject?  @relation(fields: [subjectId], references: [id])
+  subjectId        String?
+  type             PromptType @default(SUBJECT)
+}
+
+enum XPostType {
+  POST // direct post without reply
+  REPLY
+}
+
+enum PromptType {
+  SUBJECT
+  CLEAN
+  SEARCH
+}

@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"author": "Arcoz0308",
 	"scripts": {
-		"build": "pnpx prisma generate",
+		"build": "npx prisma generate",
 		"dev": "npx nodemon --exec node --import=@swc-node/register/esm-register ./src/index.ts dev debug",
 		"start": "node --import @swc-node/register/esm-register src/index.ts",
 		"script:import_from_tweetsjs": "node --import=@swc-node/register/esm-register ./script/import_from_tweetsjs/index.ts dev script",

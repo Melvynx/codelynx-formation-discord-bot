@@ -43,6 +43,5 @@
 	"type": "module",
 	"engines": {
 		"node": "20"
-	},
-	"packageManager": "pnpm@latest"
+	}
 }

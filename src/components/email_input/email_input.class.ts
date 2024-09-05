@@ -87,6 +87,9 @@ export class EmailInputModal extends ModalSubmitComponent {
     ];
 
     for (const product of user.products) {
+      if (!product.discordRoleId) {
+        continue;
+      }
       roles.push(product.discordRoleId);
     }
 

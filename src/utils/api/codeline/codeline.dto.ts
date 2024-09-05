@@ -6,7 +6,7 @@ export const userSchema = z.object({
     products: z.array(z.object({
       id: z.string(),
       title: z.string(),
-      discordRoleId: z.string(),
+      discordRoleId: z.string().nullable(),
     })),
   }).optional().nullable(),
 });

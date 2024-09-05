@@ -15,7 +15,10 @@ export class VerifyButton extends Button {
       const member = await ctx.interaction.guild?.members.fetch(ctx.interaction.user.id);
       if (member) {
         if (member.roles.cache.hasAny(env.VERIFY_ROLE_ID, env.LYNX_ROLE_ID)) {
-          return this.reply(ctx, "Vous êtes déjà vérifié !");
+          return this.reply(ctx, {
+            content: "Vous êtes déjà vérifié !",
+            ephemeral: true,
+          });
         }
       }
 

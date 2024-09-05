@@ -42,8 +42,10 @@ export class DetailedSearchResult extends Button {
       });
     }
 
+    const query = result.query.length > 200 ? `${result.query.slice(0, 200)}...` : result.query;
+
     const embed = new EmbedBuilder()
-      .setTitle("Résultat détaillé")
+      .setTitle(`Résultat détaillé de : "${query}"`)
       .setColor("Green")
       .setImage(result.youtubeVideos[0]?.media || null);
     embed.addFields({

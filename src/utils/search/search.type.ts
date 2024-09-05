@@ -4,6 +4,7 @@ export type SearchResult = {
   youtubeVideos: VideoInfo[];
   xPosts: PostInfos[];
   id: string;
+  query: string;
 }
 
 export type PostInfos = {

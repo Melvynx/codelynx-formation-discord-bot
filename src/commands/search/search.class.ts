@@ -63,8 +63,10 @@ export class SearchCommand extends Command implements SlashCommand, MessageComma
       return this.editReply(ctx, "Pas de résultats");
     }
 
+    const query = result.query.length > 200 ? `${result.query.slice(0, 200)}...` : result.query;
+
     const embed = new EmbedBuilder()
-      .setTitle("Résultat de la recherche")
+      .setTitle(`Résultat de : "${query}"`)
       .setColor("Green")
       .setDescription(`**X :** [${result.xPosts[0].title}](${result.xPosts[0].url})`
       + (result.youtubeVideos.length > 0 ? `\n**Youtube :** [${result.youtubeVideos[0].title}](${result.youtubeVideos[0].url})` : ""))

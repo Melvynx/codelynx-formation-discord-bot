@@ -126,6 +126,7 @@ export const search = async(
     youtubeVideos: video,
     xPosts: cleanThreads,
     id: generateId(),
+    query: searchTerm,
   };
 
   results.set(result.id, result);

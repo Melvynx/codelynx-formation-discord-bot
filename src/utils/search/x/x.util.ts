@@ -1,4 +1,5 @@
 import type { Result } from "arcscord";
+import { defaultLogger } from "arcscord";
 import { anyToError, error, ok } from "arcscord";
 import { OpenAIError } from "../../error/openai_error.class";
 import OpenAI from "openai";
@@ -117,7 +118,7 @@ export const searchX = async(term: string): Promise<Result<string[], OpenAIError
       continue;
     }
 
-    const content = message.content;
+    let content = message.content;
     if (content === null) {
       void pushToDB(completion, messages);
       return error(new OpenAIError({
@@ -134,6 +135,14 @@ export const searchX = async(term: string): Promise<Result<string[], OpenAIError
     }
 
     try {
+      if (content.includes("}{")) {
+        content = content.split("}{")[0] + "}";
+      }
+      if (content.includes("}\n{")) {
+        content = content.split("}\n{")[0] + "}";
+      }
+
+
       const data = responseSchema.parse(JSON.parse(content));
 
       if (!data.status) {
@@ -156,8 +165,9 @@ export const searchX = async(term: string): Promise<Result<string[], OpenAIError
 
     } catch (e) {
       void pushToDB(completion, messages);
-      return error(new OpenAIError({
-        message: "invalid response format",
+
+      const err = new OpenAIError({
+        message: `invalid response format for query ${term}, retry...`,
         model: completion.model,
         send: JSON.stringify(messages),
         receive: JSON.stringify(message),
@@ -167,8 +177,10 @@ export const searchX = async(term: string): Promise<Result<string[], OpenAIError
           total: completion.usage?.total_tokens || 0,
         },
         baseError: anyToError(e),
-      }));
+      });
+      defaultLogger.logError(err);
     }
+    return searchX(term);
   }
 
   return ok([term]);

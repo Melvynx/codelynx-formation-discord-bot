@@ -85,7 +85,9 @@ export const searchX = async(term: string): Promise<Result<string[], OpenAIError
       "response_format": {
         type: "json_object",
       },
-      "tool_choice": i < 5 ? "auto" : "none",
+      "tool_choice": i < 3 ? "auto" : "none",
+      temperature: 0.2,
+      "top_p": 0.2,
     });
 
     const message = completion.choices[0]?.message;

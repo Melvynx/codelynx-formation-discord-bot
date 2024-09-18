@@ -19,4 +19,6 @@ export const envSchema = z.object({
   LYNX_ROLE_ID: z.string(),
 
   RESOLVED_THREAD_TAG_ID: z.string(),
+
+  WELCOME_MESSAGE: z.string(),
 });

@@ -118,7 +118,7 @@ export class EmailInputModal extends ModalSubmitComponent {
         }));
       }
 
-      await channel.send(env.WELCOME_MESSAGE.replaceAll("{mention}", ctx.interaction.user.id));
+      await channel.send(env.WELCOME_MESSAGE.replaceAll("{mention}", ctx.interaction.user.toString()));
     } catch (e) {
       return error(new ModalSubmitError({
         message: "failed to send welcome message",

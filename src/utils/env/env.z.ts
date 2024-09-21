@@ -21,4 +21,7 @@ export const envSchema = z.object({
   RESOLVED_THREAD_TAG_ID: z.string(),
 
   WELCOME_MESSAGE: z.string(),
+
+  MIN_USERNAME_LEN: z.string(),
+  MAX_USERNAME_LEN: z.string(),
 });

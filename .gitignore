@@ -3,3 +3,4 @@
 /node_modules
 *.internal.*
 pnpm-lock.yaml
+script/test_api/index.ts

@@ -1,8 +1,8 @@
+import { env } from "@/utils/env/env.util";
 import type { ButtonRunContext, ButtonRunResult } from "arcscord";
 import { anyToError, Button, ButtonError, error, ok } from "arcscord";
+import { verificationModalBuilder } from "../verification_modal/verification_modal.builder";
 import { VERIFY_BUTTON_ID } from "./verify_button.builder";
-import { emailInputBuilder } from "../email_input/email_input.builder";
-import { env } from "@/utils/env/env.util";
 
 export class VerifyButton extends Button {
 
@@ -22,7 +22,7 @@ export class VerifyButton extends Button {
         }
       }
 
-      await ctx.interaction.showModal(emailInputBuilder);
+      await ctx.interaction.showModal(verificationModalBuilder);
       return ok(true);
     } catch (e) {
       return error(new ButtonError({

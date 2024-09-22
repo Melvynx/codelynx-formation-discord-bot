@@ -1,16 +1,16 @@
 import type { ModalSubmitRunContext, ModalSubmitRunResult } from "arcscord";
 import { anyToError, error, ModalSubmitComponent, ModalSubmitError, ok } from "arcscord";
-import { EMAIL_INPUT_ID, EMAIL_INPUT_TEXT_INPUT_ID } from "./email_input.builder";
 import type { GuildMember } from "discord.js";
 import { ChannelType, EmbedBuilder } from "discord.js";
 import { getUser, updateUserId } from "../../utils/api/codeline/codeline.util";
 import { env } from "../../utils/env/env.util";
+import { EMAIL_INPUT_TEXT_ID, NAME_INPUT_TEXT_ID, VERIFICATION_MODAL_ID } from "./verification_modal.builder";
 
-export class EmailInputModal extends ModalSubmitComponent {
+export class VerificationModal extends ModalSubmitComponent {
 
-  customId = EMAIL_INPUT_ID;
+  customId = VERIFICATION_MODAL_ID;
 
-  name = "email_input";
+  name = "verification_modal";
 
   defaultReplyOptions = {
     ephemeral: true,
@@ -19,8 +19,10 @@ export class EmailInputModal extends ModalSubmitComponent {
 
   async run(ctx: ModalSubmitRunContext): Promise<ModalSubmitRunResult> {
     let email = "";
+    let name = "";
     try {
-      email = ctx.interaction.fields.getTextInputValue(EMAIL_INPUT_TEXT_INPUT_ID);
+      email = ctx.interaction.fields.getTextInputValue(EMAIL_INPUT_TEXT_ID);
+      name = ctx.interaction.fields.getTextInputValue(NAME_INPUT_TEXT_ID);
     } catch (e) {
       return error(new ModalSubmitError({
         interaction: ctx.interaction,
@@ -99,6 +101,16 @@ export class EmailInputModal extends ModalSubmitComponent {
     } catch (e) {
       return error(new ModalSubmitError({
         message: "failed to add roles",
+        interaction: ctx.interaction,
+        baseError: anyToError(e),
+      }));
+    }
+
+    try {
+      await member.setNickname(name, "Vérification rename");
+    } catch (e) {
+      return error(new ModalSubmitError({
+        message: "failed to rename user",
         interaction: ctx.interaction,
         baseError: anyToError(e),
       }));

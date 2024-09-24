@@ -8,6 +8,7 @@ import { NewLinkThreadName } from "./components/new_link_thread_name/new_link_th
 import { RenameLinkThread } from "./components/rename_link_thread/rename_link_thread.class";
 import { VerificationModal } from "./components/verification_modal/verification_modal.class";
 import { VerifyButton } from "./components/verify_button/verify.button.class";
+import { VerificationRememberTask } from "./cron/verification_remeber/verification_remember.task";
 import { AutoTreads } from "./events/auto_threads/auto_threads.class";
 import { SolutionCreateThread } from "./events/solution/createThreadSolution.class";
 import { env } from "./utils/env/env.util";
@@ -30,6 +31,8 @@ client.componentManager.loadComponents([
   new VerificationModal(client),
   new VerifyButton(client),
 ]);
+
+
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 client.on("ready", async() => {
 
@@ -45,5 +48,7 @@ client.on("ready", async() => {
     data
   );
   client.commandManager.resolveCommands(commands, apisCommands);
+
+  client.taskManager.loadTasks([new VerificationRememberTask(client)]);
 });
 void client.login();

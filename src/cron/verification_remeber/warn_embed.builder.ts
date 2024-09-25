@@ -9,7 +9,7 @@ export const verificationWarnEmbedBuilder = (member: GuildMember) => new EmbedBu
   })
   .setDescription(
     `Salut ${
-      member.displayName
+      member.user.username
     },\n\nTu as rejoint le serveur **Codelynx Formation** le : ${format(
         member.joinedAt!,
         "dd/mm/yyyy"

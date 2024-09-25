@@ -1,8 +1,7 @@
 import { getTicketsChannels } from "@/utils/chanels/chanels.utils";
 import { env } from "@/utils/env/env.util";
-import { nameof } from "@/utils/nameof.utils";
 import type { TaskResult, TaskType } from "arcscord";
-import { anyToError, error, ok, Task, TaskError } from "arcscord";
+import { defaultLogger, error, ok, Task, TaskError } from "arcscord";
 import { subDays } from "date-fns";
 import { verificationKickEmbedBuilder } from "./kick_embed.builder";
 import { isUserHaveTicket } from "./verification_remember.helper";
@@ -14,7 +13,7 @@ export class VerificationRememberTask extends Task {
 
   type: TaskType = "cron";
 
-  interval = "0 0 4 * * *";
+  interval = "0 0 7 * * *";
 
   async run(): Promise<TaskResult> {
     const guild = await this.client.guilds.fetch(env.SERVER_ID);
@@ -29,7 +28,7 @@ export class VerificationRememberTask extends Task {
     );
     if (!ticketChannels) return error(
       new TaskError({
-        message: `Unable to fetch ${nameof(ticketChannels)}`,
+        message: "Unable to fetch ticketChannels",
         task: this,
       })
     );
@@ -44,19 +43,14 @@ export class VerificationRememberTask extends Task {
         < subDays(new Date(), Number(env.DAY_TO_KICK)).getTime()
     );
     const membersToWarn = usersWithoutLynxRole.filter(m => !membersToKick.includes(m) && m.joinedTimestamp!
-        < subDays(new Date(), Number(env.DAY_TO_WARN)).getTime());
+      < subDays(new Date(), Number(env.DAY_TO_WARN)).getTime());
 
-    // console.log("🚀 ~ VerificationRememberTask ~ run ~ membersToWarn:", membersToWarn.map(m => m.displayName));
     for (const member of membersToWarn) {
       try {
         await member.send({ embeds: [verificationWarnEmbedBuilder(member)] });
       } catch (err) {
-        return error(
-          new TaskError({
-            task: this,
-            baseError: anyToError(err),
-            message: `Unable to send warn message to ${member.displayName} with id ${member.id}`,
-          })
+        defaultLogger.warning(
+          `Unable to send warn message to ${member.user.username} with id ${member.id}`
         );
       }
     }
@@ -67,12 +61,15 @@ export class VerificationRememberTask extends Task {
       try {
         await member.send({ embeds: [verificationKickEmbedBuilder()] });
       } catch (err) {
-        return error(
-          new TaskError({
-            task: this,
-            baseError: anyToError(err),
-            message: `Unable to send kick message to ${member.displayName} with id ${member.id}`,
-          })
+        defaultLogger.warning(
+          `Unable to send kick message to ${member.user.username} with id ${member.id}`
+        );
+      }
+      try {
+        await member.kick();
+      } catch (err) {
+        defaultLogger.warning(
+          `Unable to kick ${member.user.username} with id ${member.id}`
         );
       }
     }

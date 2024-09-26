@@ -1,8 +1,7 @@
-import type { CommandRunContext, CommandRunResult, InteractionDefaultReplyOptions, SlashCommand } from "arcscord";
-import { CommandError, error } from "arcscord";
-import { Command } from "arcscord";
 import { unverifiedMemberListBuilder } from "@/commands/unverified_member_list/unverified_member_list.builder";
 import { getUnverifiedMembers } from "@/cron/verification_remeber/verification_remember.helper";
+import type { CommandRunContext, CommandRunResult, InteractionDefaultReplyOptions, SlashCommand } from "arcscord";
+import { Command, CommandError, error } from "arcscord";
 import { differenceInDays } from "date-fns";
 import { EmbedBuilder } from "discord.js";
 
@@ -32,8 +31,10 @@ export class UnverifiedMemberListCommand extends Command implements SlashCommand
       );
     }
 
-    const messageRow = members.map((member) => `${member.user.toString()} → ${member.joinedTimestamp
-      ? differenceInDays(Date.now(), member.joinedTimestamp) : "inconue"} jours`);
+    const messageRow = members
+      .sort((a, b) => (a.joinedTimestamp ?? 0) + (b.joinedTimestamp ?? 1))
+      .map((member) => `${member.user.toString()} → ${member.joinedTimestamp
+        ? differenceInDays(Date.now(), member.joinedTimestamp) : "inconue"} jours`);
 
     let max = false;
     while (messageRow.join("\n").length >= 4090) {

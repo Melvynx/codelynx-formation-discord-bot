@@ -4,7 +4,7 @@ import type { TaskResult, TaskType } from "arcscord";
 import { defaultLogger, error, ok, Task, TaskError } from "arcscord";
 import { subDays } from "date-fns";
 import { verificationKickEmbedBuilder } from "./kick_embed.builder";
-import { isUserHaveTicket } from "./verification_remember.helper";
+import { getUnverifiedMembers, isUserHaveTicket } from "./verification_remember.helper";
 import { verificationWarnEmbedBuilder } from "./warn_embed.builder";
 
 export class VerificationRememberTask extends Task {
@@ -16,13 +16,6 @@ export class VerificationRememberTask extends Task {
   interval = "0 0 7 * * *";
 
   async run(): Promise<TaskResult> {
-    const guild = await this.client.guilds.fetch(env.SERVER_ID);
-    if (!guild) return error(
-      new TaskError({
-        message: "Unable to fetch Codeline Guild",
-        task: this,
-      })
-    );
     const ticketChannels = await getTicketsChannels(
       this.client
     );
@@ -33,11 +26,17 @@ export class VerificationRememberTask extends Task {
       })
     );
 
-    const guildMembers = (await guild.members.fetch()).map(m => m);
+    const [usersWithoutLynxRole, err] = await getUnverifiedMembers(this.client);
 
-    const usersWithoutLynxRole = guildMembers.filter(m => !m.roles.cache.has(env.LYNX_ROLE_ID)
-      && !m.user.bot
-      && m.joinedTimestamp);
+    if (err) {
+      return error(
+        new TaskError({
+          message: "Unable to fetch unverified members",
+          baseError: err,
+          task: this,
+        })
+      );
+    }
     const membersToKick = usersWithoutLynxRole.filter(
       m => m.joinedTimestamp!
         < subDays(new Date(), Number(env.DAY_TO_KICK)).getTime()

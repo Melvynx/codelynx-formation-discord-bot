@@ -12,6 +12,7 @@ import { VerificationRememberTask } from "./cron/verification_remeber/verificati
 import { AutoTreads } from "./events/auto_threads/auto_threads.class";
 import { SolutionCreateThread } from "./events/solution/createThreadSolution.class";
 import { env } from "./utils/env/env.util";
+import { UnverifiedMemberListCommand } from "@/commands/unverified_member_list/unverified_member_list.class";
 
 const client = new ArcClient(env.TOKEN, {
   intents: [
@@ -40,6 +41,7 @@ client.on("ready", async() => {
     new SearchCommand(client),
     new SolutionCommand(client),
     new AdminCommand(client),
+    new UnverifiedMemberListCommand(client),
   ];
 
   const data = client.commandManager.loadCommands(commands);

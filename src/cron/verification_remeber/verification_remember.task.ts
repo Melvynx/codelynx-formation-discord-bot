@@ -13,7 +13,7 @@ export class VerificationRememberTask extends Task {
 
   type: TaskType = "cron";
 
-  interval = "0 0 7 * * *";
+  interval = "0 0 7 */2 * *";
 
   async run(): Promise<TaskResult> {
     const ticketChannels = await getTicketsChannels(

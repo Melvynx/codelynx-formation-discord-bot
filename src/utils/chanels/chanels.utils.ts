@@ -1,4 +1,4 @@
-import type { ArcClient } from "arcscord";
+import { type ArcClient } from "arcscord";
 import { ChannelType } from "discord.js";
 import { env } from "../env/env.util";
 

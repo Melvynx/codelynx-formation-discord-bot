@@ -1,7 +1,7 @@
 import type {
   ArcClient,
   CommandRunContext,
-  CommandRunResult,
+  CommandRunResult, InteractionDefaultReplyOptions,
   SlashCmdBuilder,
   SlashCommandWithSubs,
   SubSlashCommandList
@@ -18,6 +18,11 @@ export class AdminCommand extends Command implements SlashCommandWithSubs {
   slashBuilder = adminCommandBuilder as SlashCmdBuilder;
 
   subsCommands: SubSlashCommandList = {};
+
+  defaultReplyOptions: InteractionDefaultReplyOptions = {
+    preReply: true,
+    ephemeral: true,
+  };
 
   constructor(client: ArcClient) {
     super(client);

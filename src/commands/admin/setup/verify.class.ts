@@ -37,8 +37,7 @@ export class SetupVerifySubCommand extends SubCommand {
         })
       );
     }
-    return this.reply(ctx, {
-      ephemeral: true,
+    return this.editReply(ctx, {
       content: "success",
     });
   }

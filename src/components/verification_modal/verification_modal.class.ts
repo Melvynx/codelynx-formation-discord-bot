@@ -155,7 +155,7 @@ export class VerificationModal extends ModalSubmitComponent {
       }
     }
 
-    void sendLog(`verified user **${ctx.interaction.user.username}** with email **${email}**,`
+    void sendLog(`VERIFICATION : verified user **${ctx.interaction.user.username}** with email **${email}**,`
       + `giving role ${haveDoPresentation ? `lynx, link to presentation [message](${haveDoPresentation.url})` : "verify"}`);
     void updateUserId(email, ctx.interaction.user.id);
     return ok(true);

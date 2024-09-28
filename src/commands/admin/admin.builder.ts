@@ -5,9 +5,8 @@ export const adminCommandBuilder = new SlashCmdBuilder()
   .setDescription("Administrator command")
   .setDefaultMemberPermissions("Administrator")
   .setDMPermission(false)
-  .addSubcommandGroup((group) => group
-    .setName("setup")
-    .setDescription("setups commands")
-    .addSubcommand((sub) => sub
-      .setName("verify")
-      .setDescription("Setup verif message")));
+  .addSubcommandGroup(group => group
+    .setName("verify")
+    .setDescription("verify commands")
+    .addSubcommand(sub => sub.setName("setup").setDescription("Setup verif message"))
+    .addSubcommand(sub => sub.setName("force").setDescription("Force user verification")));

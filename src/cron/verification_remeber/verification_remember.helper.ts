@@ -1,9 +1,8 @@
+import { env } from "@/utils/env/env.util";
+import type { ArcClient, Result } from "arcscord";
+import { anyToError, BaseError, error, ok } from "arcscord";
 import type { GuildMember } from "discord.js";
 import { ChannelType, type CategoryChildChannel } from "discord.js";
-import type { ArcClient, Result } from "arcscord";
-import { ok } from "arcscord";
-import { anyToError, BaseError, error } from "arcscord";
-import { env } from "@/utils/env/env.util";
 
 /**
  * Check si un utilisateur a crée un ticket via sont ID

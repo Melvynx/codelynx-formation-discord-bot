@@ -1,9 +1,7 @@
 import { getUnverifiedMembers } from "@/cron/verification_remeber/verification_remember.helper";
-import { getChanelByIdAsync } from "@/utils/chanels/chanels.utils";
 import { env } from "@/utils/env/env.util";
 import type { CommandRunContext, CommandRunResult } from "arcscord";
 import { CommandError, defaultLogger, error, SubCommand } from "arcscord";
-import { ChannelType } from "discord.js";
 import { getPresentationMessages } from "@/utils/messages/message.util";
 
 export class ForceVerifySubCommand extends SubCommand {

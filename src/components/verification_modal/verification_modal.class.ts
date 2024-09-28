@@ -5,6 +5,8 @@ import { ChannelType, EmbedBuilder } from "discord.js";
 import { getUser, updateUserId } from "../../utils/api/codeline/codeline.util";
 import { env } from "../../utils/env/env.util";
 import { EMAIL_INPUT_TEXT_ID, NAME_INPUT_TEXT_ID, VERIFICATION_MODAL_ID } from "./verification_modal.builder";
+import { getPresentationMessages } from "@/utils/messages/message.util";
+import { sendLog } from "@/utils/log/log.util";
 
 export class VerificationModal extends ModalSubmitComponent {
 
@@ -84,8 +86,20 @@ export class VerificationModal extends ModalSubmitComponent {
       }));
     }
 
+    const [messages, err2] = await getPresentationMessages(this.client);
+
+    if (err2) {
+      return error(new ModalSubmitError({
+        message: "failed to fetch presentation messages",
+        interaction: ctx.interaction,
+        baseError: err2,
+      }));
+    }
+
+    const haveDoPresentation = messages.find((msg) => msg.author.id === ctx.interaction.user.id);
+
     const roles: string[] = [
-      env.VERIFY_ROLE_ID,
+      haveDoPresentation ? env.LYNX_ROLE_ID : env.VERIFY_ROLE_ID,
     ];
 
     for (const product of user.products) {
@@ -139,6 +153,8 @@ export class VerificationModal extends ModalSubmitComponent {
       }));
     }
 
+    void sendLog(`verified user **${ctx.interaction.user.username}** with email **${email}**,`
+      + `giving role ${haveDoPresentation ? `lynx, link to presentation [message](${haveDoPresentation.url})` : "verify"}`);
     void updateUserId(email, ctx.interaction.user.id);
     return ok(true);
   }

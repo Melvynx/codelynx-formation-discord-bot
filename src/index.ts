@@ -10,7 +10,7 @@ import { VerificationModal } from "./components/verification_modal/verification_
 import { VerifyButton } from "./components/verify_button/verify.button.class";
 import { VerificationRememberTask } from "./cron/verification_remeber/verification_remember.task";
 import { AutoTreads } from "./events/auto_threads/auto_threads.class";
-import { SolutionCreateThread } from "./events/solution/createThreadSolution.class";
+import { SolutionCreateThread } from "./events/solution/create_thread_solution.class";
 import { env } from "./utils/env/env.util";
 import { UnverifiedMemberListCommand } from "@/commands/unverified_member_list/unverified_member_list.class";
 

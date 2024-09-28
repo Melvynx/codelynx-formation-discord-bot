@@ -7,7 +7,7 @@ export const webhook = new WebhookClient({
   url: env.WEBHOOK_URL,
 });
 
-export const sendLog = async(message:  string | MessagePayload | WebhookMessageCreateOptions) => {
+export const sendLog = async(message:  string | MessagePayload | WebhookMessageCreateOptions): Promise<void> => {
   try {
     await webhook.send(message);
   } catch (e) {

@@ -10,6 +10,7 @@ export const envSchema = z.object({
   CODELINE_ENDPOINT: z.string(),
   ICON_URL: z.string(),
   INVITATION_URL: z.string(),
+  WEBHOOK_URL: z.string(),
 
   SERVER_ID: z.string(),
 

@@ -1,13 +1,14 @@
 import type {
   ArcClient,
   CommandRunContext,
-  CommandRunResult,
+  CommandRunResult, InteractionDefaultReplyOptions,
   SlashCmdBuilder,
   SlashCommandWithSubs,
   SubSlashCommandList
 } from "arcscord";
 import { Command } from "arcscord";
 import { adminCommandBuilder } from "./admin.builder";
+import { ForceVerifySubCommand } from "./force/admin_force_verify.class";
 import { SetupVerifySubCommand } from "./setup/verify.class";
 
 export class AdminCommand extends Command implements SlashCommandWithSubs {
@@ -18,12 +19,18 @@ export class AdminCommand extends Command implements SlashCommandWithSubs {
 
   subsCommands: SubSlashCommandList = {};
 
+  defaultReplyOptions: InteractionDefaultReplyOptions = {
+    preReply: true,
+    ephemeral: true,
+  };
+
   constructor(client: ArcClient) {
     super(client);
 
     this.subsCommands = {
-      setup: {
-        verify: new SetupVerifySubCommand(this.client, this),
+      verify: {
+        setup: new SetupVerifySubCommand(this.client, this),
+        force: new ForceVerifySubCommand(this.client, this),
       },
     };
   }

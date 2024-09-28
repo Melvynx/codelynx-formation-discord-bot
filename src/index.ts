@@ -13,7 +13,7 @@ import { VerificationRememberTask } from "./cron/verification_remeber/verificati
 import { AdventMessageCreate } from "./events/advent_calendar/adventMessageCreate.class";
 import { AdventMessageUpdate } from "./events/advent_calendar/adventMessageUpdate.class";
 import { AutoTreads } from "./events/auto_threads/auto_threads.class";
-import { SolutionCreateThread } from "./events/solution/createThreadSolution.class";
+import { SolutionCreateThread } from "./events/solution/create_thread_solution.class";
 import { env } from "./utils/env/env.util";
 
 const client = new ArcClient(env.TOKEN, {

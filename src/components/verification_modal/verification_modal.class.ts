@@ -110,7 +110,7 @@ export class VerificationModal extends ModalSubmitComponent {
     }
 
     try {
-      await this.editReply(ctx, `Vérification effectué avec succès. La suite dans <#${env.WELCOME_CHANNEL_ID}> !`);
+      await this.editReply(ctx, `Vérification effectué avec succès. ${!haveDoPresentation ? `La suite dans <#${env.WELCOME_CHANNEL_ID}> !` : ""}`);
       await member.roles.add(roles);
     } catch (e) {
       return error(new ModalSubmitError({
@@ -130,27 +130,29 @@ export class VerificationModal extends ModalSubmitComponent {
       }));
     }
 
-    try {
-      const channel = member.guild.channels.cache.get(env.WELCOME_CHANNEL_ID);
-      if (!channel || channel.type !== ChannelType.GuildText) {
+    if (!haveDoPresentation) {
+      try {
+        const channel = member.guild.channels.cache.get(env.WELCOME_CHANNEL_ID);
+        if (!channel || channel.type !== ChannelType.GuildText) {
+          return error(new ModalSubmitError({
+            message: "failed to send welcome message, channel not found or invalid type",
+            interaction: ctx.interaction,
+            debugs: {
+              channelId: env.WELCOME_CHANNEL_ID,
+              type: channel?.type,
+              except: ChannelType.GuildText,
+            },
+          }));
+        }
+
+        await channel.send(env.WELCOME_MESSAGE.replaceAll("{mention}", ctx.interaction.user.toString()));
+      } catch (e) {
         return error(new ModalSubmitError({
-          message: "failed to send welcome message, channel not found or invalid type",
+          message: "failed to send welcome message",
           interaction: ctx.interaction,
-          debugs: {
-            channelId: env.WELCOME_CHANNEL_ID,
-            type: channel?.type,
-            except: ChannelType.GuildText,
-          },
+          baseError: anyToError(e),
         }));
       }
-
-      await channel.send(env.WELCOME_MESSAGE.replaceAll("{mention}", ctx.interaction.user.toString()));
-    } catch (e) {
-      return error(new ModalSubmitError({
-        message: "failed to send welcome message",
-        interaction: ctx.interaction,
-        baseError: anyToError(e),
-      }));
     }
 
     void sendLog(`verified user **${ctx.interaction.user.username}** with email **${email}**,`

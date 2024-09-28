@@ -8,7 +8,7 @@ import type {
 } from "arcscord";
 import { Command } from "arcscord";
 import { adminCommandBuilder } from "./admin.builder";
-import { ForceVerifySubCommand } from "./force/adminForceVerify.class";
+import { ForceVerifySubCommand } from "./force/admin_force_verify.class";
 import { SetupVerifySubCommand } from "./setup/verify.class";
 
 export class AdminCommand extends Command implements SlashCommandWithSubs {

@@ -4,6 +4,7 @@ import { env } from "@/utils/env/env.util";
 import type { CommandRunContext, CommandRunResult } from "arcscord";
 import { CommandError, defaultLogger, error, SubCommand } from "arcscord";
 import { ChannelType } from "discord.js";
+import { getPresentationMessages } from "@/utils/messages/message.util";
 
 export class ForceVerifySubCommand extends SubCommand {
 
@@ -26,27 +27,21 @@ export class ForceVerifySubCommand extends SubCommand {
       );
     }
 
-    const channel = await getChanelByIdAsync(this.client, env.PRESENTATION_CHANNEL_ID);
-    if (!channel || channel.type !== ChannelType.GuildText) return error(
-      new CommandError({
-        message: "Unable to fetch présentation channel",
+    const [messages, err] = await getPresentationMessages(this.client);
+    if (err) {
+      return error(new CommandError({
+        message: "failed to fetch presentation messages",
         command: this,
         interaction: ctx.interaction,
         context: ctx,
-      })
-    );
-
-    const messages = (await channel.messages.fetch({ cache: false })).map(
-      m => m
-    );
+        baseError: err,
+      }));
+    }
 
     for (const member of members) {
-      console.log("🚀 ~ ForceVerifySubCommand ~ run ~ member:", member.displayName);
       const roles = member.roles.valueOf().map(r => r);
       if (!roles.some(r => r.id === env.VERIFY_ROLE_ID)) continue;
       if (!messages.some(m => m.author.id === member.id)) continue;
-
-      console.log("🚀 ~ ForceVerifySubCommand ~ run ~ channel.members.map(m => m):", channel.members.map(m => m.displayName));
 
       try {
         await member.roles.add(env.LYNX_ROLE_ID);

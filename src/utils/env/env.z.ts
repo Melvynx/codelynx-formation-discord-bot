@@ -23,6 +23,7 @@ export const envSchema = z.object({
   WELCOME_CHANNEL_ID: z.string(),
   VERIFICATION_CHANNEL_ID: z.string(),
   CREATE_TICKET_CHANEL_ID: z.string(),
+  DECEMBER_CALENDAR_CHANNEL_ID: z.string(),
 
   VERIFY_ROLE_ID: z.string(),
   LYNX_ROLE_ID: z.string(),

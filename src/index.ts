@@ -1,4 +1,5 @@
 
+import { UnverifiedMemberListCommand } from "@/commands/unverified_member_list/unverified_member_list.class";
 import { ArcClient } from "arcscord";
 import { AdminCommand } from "./commands/admin/admin.class";
 import { SearchCommand } from "./commands/search/search.class";
@@ -9,10 +10,11 @@ import { RenameLinkThread } from "./components/rename_link_thread/rename_link_th
 import { VerificationModal } from "./components/verification_modal/verification_modal.class";
 import { VerifyButton } from "./components/verify_button/verify.button.class";
 import { VerificationRememberTask } from "./cron/verification_remeber/verification_remember.task";
+import { AdventMessageCreate } from "./events/advent_calendar/adventMessageCreate.class";
+import { AdventMessageUpdate } from "./events/advent_calendar/adventMessageUpdate.class";
 import { AutoTreads } from "./events/auto_threads/auto_threads.class";
 import { SolutionCreateThread } from "./events/solution/createThreadSolution.class";
 import { env } from "./utils/env/env.util";
-import { UnverifiedMemberListCommand } from "@/commands/unverified_member_list/unverified_member_list.class";
 
 const client = new ArcClient(env.TOKEN, {
   intents: [
@@ -23,7 +25,13 @@ const client = new ArcClient(env.TOKEN, {
     "DirectMessages",
   ],
 });
-const events = [new AutoTreads(client), new SolutionCreateThread(client)];
+const events = [
+  new AutoTreads(client),
+  new SolutionCreateThread(client),
+  new AdventMessageCreate(client),
+  new AdventMessageUpdate(client),
+];
+
 void client.eventManager.loadEvents(events);
 client.componentManager.loadComponents([
   new NewLinkThreadName(client),

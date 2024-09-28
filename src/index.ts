@@ -2,6 +2,7 @@
 import { UnverifiedMemberListCommand } from "@/commands/unverified_member_list/unverified_member_list.class";
 import { ArcClient } from "arcscord";
 import { AdminCommand } from "./commands/admin/admin.class";
+import { AdventCommand } from "./commands/advent_challenge/advent_challenge.class";
 import { SearchCommand } from "./commands/search/search.class";
 import { SolutionCommand } from "./commands/solution/solution.class";
 import { DetailedSearchResult } from "./components/detailled_search_result/detailed_search_result.class";
@@ -49,6 +50,7 @@ client.on("ready", async() => {
     new SearchCommand(client),
     new SolutionCommand(client),
     new AdminCommand(client),
+    new AdventCommand(client),
     new UnverifiedMemberListCommand(client),
   ];
 

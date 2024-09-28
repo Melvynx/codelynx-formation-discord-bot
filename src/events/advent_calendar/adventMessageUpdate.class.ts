@@ -13,7 +13,7 @@ export class AdventMessageUpdate extends Event<"messageUpdate"> {
     if (message.author.bot) return ok(true);
     if (message.guildId !== env.SERVER_ID) return ok(true);
     if (message.channel.type != ChannelType.PublicThread) return ok(true);
-    if (message.channel.parentId != env.DECEMBER_CALENDAR_CHANNEL_ID) return ok(true);
+    if (message.channel.parentId != env.ADEVENT_CHALLENGE_CHANNEL_ID) return ok(true);
 
     const author = await message.guild?.members.fetch(message.author.id);
     if (!author) return error(
@@ -35,7 +35,7 @@ Pour avoir essayer de modifier ton message de solution alors que les règles du 
     await new Promise(resolve => setTimeout(resolve, 60 * 1000));
     await messageReply.delete();
     await message.delete();
-    await message.channel.send(`<@${author.id}> avais publier une solution. Cependant cette dernière `)
+    await message.channel.send(`<@${author.id}> avais publier une solution. Cependant cette dernière à été supprimée due à une modification`);
   }
 
 }

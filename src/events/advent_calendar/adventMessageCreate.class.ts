@@ -13,7 +13,7 @@ export class AdventMessageCreate extends Event<"messageCreate"> {
     if (message.author.bot) return ok(true);
     if (message.guildId !== env.SERVER_ID) return ok(true);
     if (message.channel.type != ChannelType.PublicThread) return ok(true);
-    if (message.channel.parentId != env.DECEMBER_CALENDAR_CHANNEL_ID) return ok(true);
+    if (message.channel.parentId != env.ADEVENT_CHALLENGE_CHANNEL_ID) return ok(true);
 
     const author = await message.guild?.members.fetch(message.author.id);
     if (!author) return error(

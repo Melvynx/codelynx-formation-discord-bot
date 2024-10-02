@@ -1,28 +1,28 @@
-import { CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE } from "@/utils/api/codeline/codeline.role-mapping";
-import { sendLog } from "@/utils/log/log.util";
-import { getPresentationMessages } from "@/utils/messages/message.util";
-import type { ModalSubmitRunContext, ModalSubmitRunResult } from "arcscord";
+import { CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE } from '@/utils/api/codeline/codeline.role-mapping';
+import { sendLog } from '@/utils/log/log.util';
+import { getPresentationMessages } from '@/utils/messages/message.util';
+import type { ModalSubmitRunContext, ModalSubmitRunResult } from 'arcscord';
 import {
   anyToError,
   error,
   ModalSubmitComponent,
   ModalSubmitError,
   ok,
-} from "arcscord";
-import type { GuildMember } from "discord.js";
-import { ChannelType, EmbedBuilder } from "discord.js";
-import { getUser, updateUserId } from "../../utils/api/codeline/codeline.util";
-import { env } from "../../utils/env/env.util";
+} from 'arcscord';
+import type { GuildMember } from 'discord.js';
+import { ChannelType, EmbedBuilder } from 'discord.js';
+import { getUser, updateUserId } from '../../utils/api/codeline/codeline.util';
+import { env } from '../../utils/env/env.util';
 import {
   EMAIL_INPUT_TEXT_ID,
   NAME_INPUT_TEXT_ID,
   VERIFICATION_MODAL_ID,
-} from "./verification_modal.builder";
+} from './verification_modal.builder';
 
 export class VerificationModal extends ModalSubmitComponent {
   customId = VERIFICATION_MODAL_ID;
 
-  name = "verification_modal";
+  name = 'verification_modal';
 
   defaultReplyOptions = {
     ephemeral: true,
@@ -30,8 +30,8 @@ export class VerificationModal extends ModalSubmitComponent {
   };
 
   async run(ctx: ModalSubmitRunContext): Promise<ModalSubmitRunResult> {
-    let email = "";
-    let name = "";
+    let email = '';
+    let name = '';
     try {
       email = ctx.interaction.fields.getTextInputValue(EMAIL_INPUT_TEXT_ID);
       name = ctx.interaction.fields.getTextInputValue(NAME_INPUT_TEXT_ID);
@@ -39,7 +39,7 @@ export class VerificationModal extends ModalSubmitComponent {
       return error(
         new ModalSubmitError({
           interaction: ctx.interaction,
-          message: "missing value in text input",
+          message: 'missing value in text input',
           baseError: anyToError(e),
         })
       );
@@ -51,9 +51,9 @@ export class VerificationModal extends ModalSubmitComponent {
       return this.editReply(ctx, {
         embeds: [
           new EmbedBuilder()
-            .setTitle("Email invalide")
+            .setTitle('Email invalide')
             .setDescription(`l'email ${email} n'a pas un format valide`)
-            .setColor("Red"),
+            .setColor('Red'),
         ],
       });
     }
@@ -62,7 +62,7 @@ export class VerificationModal extends ModalSubmitComponent {
     if (err) {
       return error(
         new ModalSubmitError({
-          message: "failed to get codeline error : " + err.message,
+          message: 'failed to get codeline error : ' + err.message,
           interaction: ctx.interaction,
           baseError: err,
         })
@@ -75,9 +75,9 @@ export class VerificationModal extends ModalSubmitComponent {
           new EmbedBuilder()
             .setTitle("Pas d'utilisateur trouvé")
             .setDescription(
-              "Aucun compte codelynx à été trouvé avec cette adresse mail"
+              'Aucun compte codelynx à été trouvé avec cette adresse mail'
             )
-            .setColor("Red"),
+            .setColor('Red'),
         ],
       });
     }
@@ -86,28 +86,26 @@ export class VerificationModal extends ModalSubmitComponent {
       return this.editReply(ctx, {
         embeds: [
           new EmbedBuilder()
-            .setTitle("Déjà relié")
+            .setTitle('Déjà relié')
             .setDescription(
-              "Votre compte a déjà été relier a un utilisateur, si besoins contactez le support."
+              'Votre compte a déjà été relier a un utilisateur, si besoins contactez le support.'
             )
-            .setColor("Red"),
+            .setColor('Red'),
         ],
       });
     }
 
     if (!ctx.interaction.member || !ctx.interaction.guild) {
-      return ok("Not in guild");
+      return ok('Not in guild');
     }
 
     let member: GuildMember;
     try {
-      member = await ctx.interaction.guild.members.fetch(
-        ctx.interaction.user.id
-      );
+      member = await ctx.interaction.guild.members.fetch(ctx.interaction.user.id);
     } catch (e) {
       return error(
         new ModalSubmitError({
-          message: "failed to fetch member",
+          message: 'failed to fetch member',
           interaction: ctx.interaction,
           baseError: anyToError(e),
         })
@@ -119,7 +117,7 @@ export class VerificationModal extends ModalSubmitComponent {
     if (err2) {
       return error(
         new ModalSubmitError({
-          message: "failed to fetch presentation messages",
+          message: 'failed to fetch presentation messages',
           interaction: ctx.interaction,
           baseError: err2,
         })
@@ -146,16 +144,14 @@ export class VerificationModal extends ModalSubmitComponent {
       await this.editReply(
         ctx,
         `Vérification effectué avec succès. ${
-          !haveDoPresentation
-            ? `La suite dans <#${env.WELCOME_CHANNEL_ID}> !`
-            : ""
+          !haveDoPresentation ? `La suite dans <#${env.WELCOME_CHANNEL_ID}> !` : ''
         }`
       );
       await member.roles.add(roles);
     } catch (e) {
       return error(
         new ModalSubmitError({
-          message: "failed to add roles",
+          message: 'failed to add roles',
           interaction: ctx.interaction,
           baseError: anyToError(e),
         })
@@ -163,11 +159,11 @@ export class VerificationModal extends ModalSubmitComponent {
     }
 
     try {
-      await member.setNickname(name, "Vérification rename");
+      await member.setNickname(name, 'Vérification rename');
     } catch (e) {
       return error(
         new ModalSubmitError({
-          message: "failed to rename user",
+          message: 'failed to rename user',
           interaction: ctx.interaction,
           baseError: anyToError(e),
         })
@@ -181,7 +177,7 @@ export class VerificationModal extends ModalSubmitComponent {
           return error(
             new ModalSubmitError({
               message:
-                "failed to send welcome message, channel not found or invalid type",
+                'failed to send welcome message, channel not found or invalid type',
               interaction: ctx.interaction,
               debugs: {
                 channelId: env.WELCOME_CHANNEL_ID,
@@ -194,14 +190,14 @@ export class VerificationModal extends ModalSubmitComponent {
 
         await channel.send(
           env.WELCOME_MESSAGE.replaceAll(
-            "{mention}",
+            '{mention}',
             ctx.interaction.user.toString()
           )
         );
       } catch (e) {
         return error(
           new ModalSubmitError({
-            message: "failed to send welcome message",
+            message: 'failed to send welcome message',
             interaction: ctx.interaction,
             baseError: anyToError(e),
           })
@@ -214,7 +210,7 @@ export class VerificationModal extends ModalSubmitComponent {
         `giving role ${
           haveDoPresentation
             ? `lynx, link to presentation [message](${haveDoPresentation.url})`
-            : "verify"
+            : 'verify'
         }`
     );
     void updateUserId(email, ctx.interaction.user.id);

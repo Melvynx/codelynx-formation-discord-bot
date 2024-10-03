@@ -9,7 +9,7 @@ import {
   ok,
 } from "arcscord";
 import type { GuildMember } from "discord.js";
-import { EmbedBuilder } from "discord.js";
+import { ChannelType, EmbedBuilder } from "discord.js";
 import { getUser, updateUserId } from "../../utils/api/codeline/codeline.util";
 import { env } from "../../utils/env/env.util";
 import {
@@ -174,6 +174,28 @@ export class VerificationModal extends ModalSubmitComponent {
 
     if (!haveDoPresentation) {
       try {
+        const channel = member.guild.channels.cache.get(env.WELCOME_CHANNEL_ID);
+        if (!channel || channel.type !== ChannelType.GuildText) {
+          return error(
+            new ModalSubmitError({
+              message:
+                "failed to send welcome message, channel not found or invalid type",
+              interaction: ctx.interaction,
+              debugs: {
+                channelId: env.WELCOME_CHANNEL_ID,
+                type: channel?.type,
+                except: ChannelType.GuildText,
+              },
+            }),
+          );
+        }
+
+        await channel.send(
+          env.WELCOME_MESSAGE.replaceAll(
+            "{mention}",
+            ctx.interaction.user.toString(),
+          ),
+        );
         await member.send(
           env.WELCOME_MESSAGE.replaceAll(
             "{mention}",
@@ -192,7 +214,7 @@ export class VerificationModal extends ModalSubmitComponent {
     }
 
     void sendLog(
-      `VERIFICATION : verified user **${ctx.interaction.user.username}** with email **${email}**,` +
+      `VERIFICATION : verified user <@${member.user.id}> with email **${email}**,` +
         `giving role ${
           haveDoPresentation
             ? `lynx, link to presentation [message](${haveDoPresentation.url})`

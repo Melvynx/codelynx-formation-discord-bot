@@ -1,10 +1,14 @@
 {
   "extends": "@arcoz",
   "rules": {
-    "max-len": ["error", {
-      "ignoreTemplateLiterals": true,
-      "ignoreStrings": true,
-      "code": 120
-    }]
+    "max-len": [
+      "error",
+      {
+        "ignoreTemplateLiterals": true,
+        "ignoreStrings": true,
+        "code": 120
+      }
+    ],
+    "eol-last": 0
   }
 }

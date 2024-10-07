@@ -1,3 +1,4 @@
+import { CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE } from "@/utils/api/codeline/codeline.role-mapping";
 import { sendLog } from "@/utils/log/log.util";
 import { getPresentationMessages } from "@/utils/messages/message.util";
 import type { ModalSubmitRunContext, ModalSubmitRunResult } from "arcscord";
@@ -64,6 +65,7 @@ export class VerificationModal extends ModalSubmitComponent {
           message: "failed to get codeline error : " + err.message,
           interaction: ctx.interaction,
           baseError: err,
+
         }),
       );
     }
@@ -129,15 +131,18 @@ export class VerificationModal extends ModalSubmitComponent {
       msg => msg.author.id === ctx.interaction.user.id,
     );
 
-    const roles: string[] = [
+    const formationRoles: string[] = [
       haveDoPresentation ? env.LYNX_ROLE_ID : env.VERIFY_ROLE_ID,
     ];
 
     for (const product of user.products) {
-      if (!product.discordRoleId) {
+      if (!product.id) {
         continue;
       }
-      roles.push(product.discordRoleId);
+      const codelineRoles = CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE[product.id];
+
+      if (!codelineRoles) continue;
+      formationRoles.push(...codelineRoles);
     }
 
     try {

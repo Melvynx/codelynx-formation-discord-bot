@@ -154,7 +154,7 @@ export class VerificationModal extends ModalSubmitComponent {
             : ""
         }`,
       );
-      await member.roles.add(roles);
+      await member.roles.add(formationRoles);
     } catch (e) {
       return error(
         new ModalSubmitError({

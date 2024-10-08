@@ -1,6 +1,7 @@
-
+import { UnverifiedMemberListCommand } from "@/commands/unverified_member_list/unverified_member_list.class";
 import { ArcClient } from "arcscord";
 import { AdminCommand } from "./commands/admin/admin.class";
+import { PingCommand } from "./commands/ping/ping.class";
 import { SearchCommand } from "./commands/search/search.class";
 import { SolutionCommand } from "./commands/solution/solution.class";
 import { DetailedSearchResult } from "./components/detailled_search_result/detailed_search_result.class";
@@ -12,7 +13,6 @@ import { VerificationRememberTask } from "./cron/verification_remeber/verificati
 import { AutoTreads } from "./events/auto_threads/auto_threads.class";
 import { SolutionCreateThread } from "./events/solution/create_thread_solution.class";
 import { env } from "./utils/env/env.util";
-import { UnverifiedMemberListCommand } from "@/commands/unverified_member_list/unverified_member_list.class";
 
 const client = new ArcClient(env.TOKEN, {
   intents: [
@@ -33,15 +33,14 @@ client.componentManager.loadComponents([
   new VerifyButton(client),
 ]);
 
-
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-client.on("ready", async() => {
-
+client.on("ready", async () => {
   const commands = [
     new SearchCommand(client),
     new SolutionCommand(client),
     new AdminCommand(client),
     new UnverifiedMemberListCommand(client),
+    new PingCommand(client),
   ];
 
   const data = client.commandManager.loadCommands(commands);

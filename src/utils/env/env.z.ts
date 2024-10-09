@@ -13,6 +13,7 @@ export const envSchema = z.object({
   ICON_URL: z.string(),
   INVITATION_URL: z.string(),
   WEBHOOK_URL: z.string(),
+  RAILWAY_LOGS_BASE_URL: z.string(),
 
   // DISCORD GUILD ID
   SERVER_ID: z.string(),

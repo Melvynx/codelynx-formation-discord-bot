@@ -1,8 +1,8 @@
 import type { TaskResult, TaskType } from "arcscord";
 import { getTicketsChannels } from "@/utils/chanels/chanels.utils";
 import { env } from "@/utils/env/env.util";
-import { sendLog } from "@/utils/log/log.util";
 import { anyToError, defaultLogger, error, ok, Task, TaskError } from "arcscord";
+import { LynxLogger } from "@/utils/log/log.util";
 import { differenceInDays, subDays } from "date-fns";
 import { verificationKickEmbedBuilder } from "./kick_embed.builder";
 import {
@@ -25,16 +25,16 @@ export class VerificationRememberTask extends Task {
         new TaskError({
           message: "Unable to fetch ticketChannels",
           task: this,
-        }),
+        })
       );
     }
 
     const [usersWithoutLynxRole, err] = await getUnverifiedMembers(this.client);
 
-    if (!usersWithoutLynxRole)
-      return ok("Aucun utilisateur non vérifier");
-    await sendLog(
-      `VERIFICATION_REMEMBER : ${usersWithoutLynxRole.length} membres non vérifier detecter`,
+
+    if (!usersWithoutLynxRole) return ok("Aucun utilisateur non vérifier");
+    LynxLogger.info(
+      `**VERIFICATION_REMEMBER** : ${usersWithoutLynxRole.length} membres non vérifier detecter`
     );
 
     if (err) {
@@ -43,7 +43,7 @@ export class VerificationRememberTask extends Task {
           message: "Unable to fetch unverified members",
           baseError: err,
           task: this,
-        }),
+        })
       );
     }
 
@@ -62,14 +62,14 @@ export class VerificationRememberTask extends Task {
     for (const member of membersToWarn) {
       try {
         await member.send({ embeds: [verificationWarnEmbedBuilder(member)] });
-        await sendLog(
-          `VERIFICATION_REMEMBER : <@${
+        LynxLogger.info(
+          `**VERIFICATION_REMEMBER** : <@${
             member.id
           }> à reçut un rappel de vérification. Il est présent sur le serveur de puis ${
             member.joinedTimestamp
               ? differenceInDays(Date.now(), member.joinedTimestamp)
               : "inconnue"
-          } jours`,
+          } jours`
         );
       }
       catch (err) {
@@ -84,14 +84,14 @@ export class VerificationRememberTask extends Task {
         continue;
       try {
         await member.send({ embeds: [verificationKickEmbedBuilder()] });
-        await sendLog(
-          `VERIFICATION_REMEMBER : <@${
+        LynxLogger.info(
+          `**VERIFICATION_REMEMBER** : <@${
             member.id
           }> à reçut une explication de kick. Il est présent sur le serveur de puis ${
             member.joinedTimestamp
               ? differenceInDays(Date.now(), member.joinedTimestamp)
               : "inconnue"
-          } jours`,
+          } jours`
         );
       }
       catch (err) {
@@ -103,8 +103,8 @@ export class VerificationRememberTask extends Task {
 
       try {
         await member.kick();
-        await sendLog(
-          `VERIFICATION_REMEMBER : <@${member.id}> à été kick due à la non vérification de son compte`,
+        LynxLogger.info(
+          `**VERIFICATION_REMEMBER** : <@${member.id}> à été kick due à la non vérification de son compte`
         );
       }
       catch (err) {

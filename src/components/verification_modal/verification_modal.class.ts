@@ -1,7 +1,10 @@
+import type { ModalSubmitRunContext, ModalSubmitRunResult } from "arcscord";
+import type { GuildMember } from "discord.js";
 import { CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE } from "@/utils/api/codeline/codeline.role-mapping";
+import { getUser, updateUserId } from "@/utils/api/codeline/codeline.util";
+import { env } from "@/utils/env/env.util";
 import { sendLog } from "@/utils/log/log.util";
 import { getPresentationMessages } from "@/utils/messages/message.util";
-import type { ModalSubmitRunContext, ModalSubmitRunResult } from "arcscord";
 import {
   anyToError,
   error,
@@ -9,10 +12,7 @@ import {
   ModalSubmitError,
   ok,
 } from "arcscord";
-import type { GuildMember } from "discord.js";
 import { ChannelType, EmbedBuilder } from "discord.js";
-import { getUser, updateUserId } from "../../utils/api/codeline/codeline.util";
-import { env } from "../../utils/env/env.util";
 import {
   EMAIL_INPUT_TEXT_ID,
   NAME_INPUT_TEXT_ID,
@@ -35,7 +35,8 @@ export class VerificationModal extends ModalSubmitComponent {
     try {
       email = ctx.interaction.fields.getTextInputValue(EMAIL_INPUT_TEXT_ID);
       name = ctx.interaction.fields.getTextInputValue(NAME_INPUT_TEXT_ID);
-    } catch (e) {
+    }
+    catch (e) {
       return error(
         new ModalSubmitError({
           interaction: ctx.interaction,
@@ -45,7 +46,7 @@ export class VerificationModal extends ModalSubmitComponent {
       );
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
       return this.editReply(ctx, {
@@ -62,7 +63,7 @@ export class VerificationModal extends ModalSubmitComponent {
     if (err) {
       return error(
         new ModalSubmitError({
-          message: "failed to get codeline error : " + err.message,
+          message: `failed to get codeline error : ${err.message}`,
           interaction: ctx.interaction,
           baseError: err,
 
@@ -105,7 +106,8 @@ export class VerificationModal extends ModalSubmitComponent {
       member = await ctx.interaction.guild.members.fetch(
         ctx.interaction.user.id,
       );
-    } catch (e) {
+    }
+    catch (e) {
       return error(
         new ModalSubmitError({
           message: "failed to fetch member",
@@ -141,7 +143,8 @@ export class VerificationModal extends ModalSubmitComponent {
       }
       const codelineRoles = CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE[product.id];
 
-      if (!codelineRoles) continue;
+      if (!codelineRoles)
+        continue;
       formationRoles.push(...codelineRoles);
     }
 
@@ -155,7 +158,8 @@ export class VerificationModal extends ModalSubmitComponent {
         }`,
       );
       await member.roles.add(formationRoles);
-    } catch (e) {
+    }
+    catch (e) {
       return error(
         new ModalSubmitError({
           message: "failed to add roles",
@@ -167,7 +171,8 @@ export class VerificationModal extends ModalSubmitComponent {
 
     try {
       await member.setNickname(name, "Vérification rename");
-    } catch (e) {
+    }
+    catch (e) {
       return error(
         new ModalSubmitError({
           message: "failed to rename user",
@@ -207,7 +212,8 @@ export class VerificationModal extends ModalSubmitComponent {
             ctx.interaction.user.toString(),
           ),
         );
-      } catch (e) {
+      }
+      catch (e) {
         return error(
           new ModalSubmitError({
             message: "failed to send welcome message",
@@ -219,12 +225,12 @@ export class VerificationModal extends ModalSubmitComponent {
     }
 
     void sendLog(
-      `VERIFICATION : verified user <@${member.user.id}> with email **${email}**,` +
-        `giving role ${
-          haveDoPresentation
-            ? `lynx, link to presentation [message](${haveDoPresentation.url})`
-            : "verify"
-        }`,
+      `VERIFICATION : verified user <@${member.user.id}> with email **${email}**,`
+      + `giving role ${
+        haveDoPresentation
+          ? `lynx, link to presentation [message](${haveDoPresentation.url})`
+          : "verify"
+      }`,
     );
     void updateUserId(email, ctx.interaction.user.id);
     return ok(true);

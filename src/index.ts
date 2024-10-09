@@ -1,4 +1,4 @@
-
+import { UnverifiedMemberListCommand } from "@/commands/unverified_member_list/unverified_member_list.class";
 import { ArcClient } from "arcscord";
 import { AdminCommand } from "./commands/admin/admin.class";
 import { SearchCommand } from "./commands/search/search.class";
@@ -12,7 +12,6 @@ import { VerificationRememberTask } from "./cron/verification_remeber/verificati
 import { AutoTreads } from "./events/auto_threads/auto_threads.class";
 import { SolutionCreateThread } from "./events/solution/create_thread_solution.class";
 import { env } from "./utils/env/env.util";
-import { UnverifiedMemberListCommand } from "@/commands/unverified_member_list/unverified_member_list.class";
 
 const client = new ArcClient(env.TOKEN, {
   intents: [
@@ -33,10 +32,7 @@ client.componentManager.loadComponents([
   new VerifyButton(client),
 ]);
 
-
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-client.on("ready", async() => {
-
+client.on("ready", async () => {
   const commands = [
     new SearchCommand(client),
     new SolutionCommand(client),
@@ -47,7 +43,7 @@ client.on("ready", async() => {
   const data = client.commandManager.loadCommands(commands);
   const apisCommands = await client.commandManager.pushGuildCommands(
     env.SERVER_ID,
-    data
+    data,
   );
   client.commandManager.resolveCommands(commands, apisCommands);
 

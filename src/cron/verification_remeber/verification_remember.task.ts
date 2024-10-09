@@ -1,8 +1,8 @@
+import type { TaskResult, TaskType } from "arcscord";
 import { getTicketsChannels } from "@/utils/chanels/chanels.utils";
 import { env } from "@/utils/env/env.util";
 import { sendLog } from "@/utils/log/log.util";
-import type { TaskResult, TaskType } from "arcscord";
-import { defaultLogger, error, ok, Task, TaskError } from "arcscord";
+import { anyToError, defaultLogger, error, ok, Task, TaskError } from "arcscord";
 import { differenceInDays, subDays } from "date-fns";
 import { verificationKickEmbedBuilder } from "./kick_embed.builder";
 import {
@@ -20,17 +20,19 @@ export class VerificationRememberTask extends Task {
 
   async run(): Promise<TaskResult> {
     const ticketChannels = await getTicketsChannels(this.client);
-    if (!ticketChannels)
+    if (!ticketChannels) {
       return error(
         new TaskError({
           message: "Unable to fetch ticketChannels",
           task: this,
         }),
       );
+    }
 
     const [usersWithoutLynxRole, err] = await getUnverifiedMembers(this.client);
 
-    if (!usersWithoutLynxRole) return ok("Aucun utilisateur non vérifier");
+    if (!usersWithoutLynxRole)
+      return ok("Aucun utilisateur non vérifier");
     await sendLog(
       `VERIFICATION_REMEMBER : ${usersWithoutLynxRole.length} membres non vérifier detecter`,
     );
@@ -47,14 +49,14 @@ export class VerificationRememberTask extends Task {
 
     const membersToKick = usersWithoutLynxRole.filter(
       m =>
-        m.joinedTimestamp! <
-        subDays(new Date(), Number(env.DAY_TO_KICK)).getTime(),
+        m.joinedTimestamp!
+        < subDays(new Date(), Number(env.DAY_TO_KICK)).getTime(),
     );
     const membersToWarn = usersWithoutLynxRole.filter(
       m =>
-        !membersToKick.includes(m) &&
-        m.joinedTimestamp! <
-          subDays(new Date(), Number(env.DAY_TO_WARN)).getTime(),
+        !membersToKick.includes(m)
+        && m.joinedTimestamp!
+        < subDays(new Date(), Number(env.DAY_TO_WARN)).getTime(),
     );
 
     for (const member of membersToWarn) {
@@ -69,15 +71,17 @@ export class VerificationRememberTask extends Task {
               : "inconnue"
           } jours`,
         );
-      } catch (err) {
+      }
+      catch (err) {
         defaultLogger.warning(
-          `Unable to send warn message to <@${member.user.id}> with id ${member.id}`,
+          `Unable to send warn message to <@${member.user.id}> with id ${member.id}, error : ${anyToError(err).message}`,
         );
       }
     }
 
     for (const member of membersToKick) {
-      if (isUserHaveTicket(ticketChannels, member.id)) continue;
+      if (isUserHaveTicket(ticketChannels, member.id))
+        continue;
       try {
         await member.send({ embeds: [verificationKickEmbedBuilder()] });
         await sendLog(
@@ -89,9 +93,10 @@ export class VerificationRememberTask extends Task {
               : "inconnue"
           } jours`,
         );
-      } catch (err) {
+      }
+      catch (err) {
         defaultLogger.warning(
-          `Unable to send kick message to <@${member.user.id}> with id ${member.id}`,
+          `Unable to send kick message to <@${member.user.id}> with id ${member.id}, error : ${anyToError(err).message}`,
         );
         continue;
       }
@@ -101,9 +106,10 @@ export class VerificationRememberTask extends Task {
         await sendLog(
           `VERIFICATION_REMEMBER : <@${member.id}> à été kick due à la non vérification de son compte`,
         );
-      } catch (err) {
+      }
+      catch (err) {
         defaultLogger.warning(
-          `Unable to kick <@${member.user.id}> with id ${member.id}`,
+          `Unable to kick <@${member.user.id}> with id ${member.id}, error : ${anyToError(err).message}`,
         );
       }
     }

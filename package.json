@@ -27,6 +27,7 @@
 		"discord.js": "^14.15.2",
 		"dotenv": "^16.4.5",
 		"openai": "^4.53.2",
+		"ts-log": "^2.2.7",
 		"tsconfig-paths": "^4.2.0",
 		"tsx": "^4.15.5",
 		"typescript": "^5.4.5",

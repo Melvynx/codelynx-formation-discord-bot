@@ -33,7 +33,6 @@ client.componentManager.loadComponents([
   new VerifyButton(client),
 ]);
 
-
 client.on("ready", async () => {
   const commands = [
     new SearchCommand(client),

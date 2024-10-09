@@ -21,7 +21,7 @@ export class ForceVerifySubCommand extends SubCommand {
           interaction: ctx.interaction,
           context: ctx,
           baseError: memberError,
-        })
+        }),
       );
     }
 
@@ -34,7 +34,7 @@ export class ForceVerifySubCommand extends SubCommand {
           interaction: ctx.interaction,
           context: ctx,
           baseError: err,
-        })
+        }),
       );
     }
 
@@ -56,7 +56,7 @@ export class ForceVerifySubCommand extends SubCommand {
       catch (addRoleErr) {
         errCount++;
         LynxLogger.warn(
-          `**FORCE VERIFY** : Fail to add Lynx role for <@${member.user.id}> with id ${member.id}`
+          `**FORCE VERIFY** : Fail to add Lynx role for <@${member.user.id}> with id ${member.id}, error :${anyToError(addRoleErr).message}`,
         );
         continue;
       }
@@ -67,24 +67,24 @@ export class ForceVerifySubCommand extends SubCommand {
       catch (removeRoleErr) {
         errCount++;
         LynxLogger.warn(
-          `**FORCE VERIFY** : Fail to remove Verification role for <@${member.user.id}> with id ${member.id}`
+          `**FORCE VERIFY** : Fail to remove Verification role for <@${member.user.id}> with id ${member.id}, error :${anyToError(removeRoleErr).message}`,
         );
       }
 
       try {
         await member.send(
-          "Bonjour, un petit bug a été détecter avec le bot de Codeline. C'est ce pourquoi tu as reçut des messages les deux dernier jours. Le problème à été solutionner. Ton compte est bien a présent actif "
+          "Bonjour, un petit bug a été détecter avec le bot de Codeline. C'est ce pourquoi tu as reçut des messages les deux dernier jours. Le problème à été solutionner. Ton compte est bien a présent actif ",
         );
       }
       catch (messageErr) {
         errCount++;
         LynxLogger.warn(
-          `**FORCE VERIFY** : Fail to send message for <@${member.user.id}> with id ${member.id}`
+          `**FORCE VERIFY** : Fail to send message for <@${member.user.id}> with id ${member.id}, error :${anyToError(messageErr).message}`,
         );
       }
 
       LynxLogger.info(
-        `**FORCE VERIFY** : update role of <@${member.user.id}>, link to presentation [message](${message.url})`
+        `**FORCE VERIFY** : update role of <@${member.user.id}>, link to presentation [message](${message.url})`,
       );
     }
 

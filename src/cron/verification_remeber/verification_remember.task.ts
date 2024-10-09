@@ -1,8 +1,8 @@
 import type { TaskResult, TaskType } from "arcscord";
 import { getTicketsChannels } from "@/utils/chanels/chanels.utils";
 import { env } from "@/utils/env/env.util";
-import { anyToError, defaultLogger, error, ok, Task, TaskError } from "arcscord";
 import { LynxLogger } from "@/utils/log/log.util";
+import { anyToError, defaultLogger, error, ok, Task, TaskError } from "arcscord";
 import { differenceInDays, subDays } from "date-fns";
 import { verificationKickEmbedBuilder } from "./kick_embed.builder";
 import {
@@ -25,16 +25,16 @@ export class VerificationRememberTask extends Task {
         new TaskError({
           message: "Unable to fetch ticketChannels",
           task: this,
-        })
+        }),
       );
     }
 
     const [usersWithoutLynxRole, err] = await getUnverifiedMembers(this.client);
 
-
-    if (!usersWithoutLynxRole) return ok("Aucun utilisateur non vérifier");
+    if (!usersWithoutLynxRole)
+      return ok("Aucun utilisateur non vérifier");
     LynxLogger.info(
-      `**VERIFICATION_REMEMBER** : ${usersWithoutLynxRole.length} membres non vérifier detecter`
+      `**VERIFICATION_REMEMBER** : ${usersWithoutLynxRole.length} membres non vérifier detecter`,
     );
 
     if (err) {
@@ -43,7 +43,7 @@ export class VerificationRememberTask extends Task {
           message: "Unable to fetch unverified members",
           baseError: err,
           task: this,
-        })
+        }),
       );
     }
 
@@ -69,7 +69,7 @@ export class VerificationRememberTask extends Task {
             member.joinedTimestamp
               ? differenceInDays(Date.now(), member.joinedTimestamp)
               : "inconnue"
-          } jours`
+          } jours`,
         );
       }
       catch (err) {
@@ -91,7 +91,7 @@ export class VerificationRememberTask extends Task {
             member.joinedTimestamp
               ? differenceInDays(Date.now(), member.joinedTimestamp)
               : "inconnue"
-          } jours`
+          } jours`,
         );
       }
       catch (err) {
@@ -104,7 +104,7 @@ export class VerificationRememberTask extends Task {
       try {
         await member.kick();
         LynxLogger.info(
-          `**VERIFICATION_REMEMBER** : <@${member.id}> à été kick due à la non vérification de son compte`
+          `**VERIFICATION_REMEMBER** : <@${member.id}> à été kick due à la non vérification de son compte`,
         );
       }
       catch (err) {

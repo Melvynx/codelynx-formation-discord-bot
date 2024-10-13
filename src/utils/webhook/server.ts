@@ -3,7 +3,10 @@ import type { FastifyInstance } from "fastify";
 import Fastify from "fastify";
 import { env } from "../env/env.util";
 import { LynxLogger } from "../log/log.util";
-import { onProductPurchaseAsync } from "./codeline-webhook.utils";
+import {
+  onProductPurchaseAsync,
+  onProductRefundAsync,
+} from "./codeline-webhook.utils";
 import { productSchema, WebhookPayloadSchema } from "./webhook.type";
 
 export const fastifyServer = Fastify({
@@ -19,7 +22,7 @@ export const startWebhookServer = (fastifyServer: FastifyInstance): void =>
     defaultLogger.info(`Webhooks serveur start on ${address}`);
   });
 
-fastifyServer.post("/api/webhooks/codeline", (req, res) => {
+fastifyServer.post("/api/webhooks/codeline", async (req, res) => {
   const result = WebhookPayloadSchema.safeParse(req.body);
 
   if (!result.success) {
@@ -35,21 +38,25 @@ fastifyServer.post("/api/webhooks/codeline", (req, res) => {
 
   if (body.secret !== env.CODELINE_WEBHOOK_SECRET) {
     LynxLogger.warn(`Codeline Webhook invalid secret.
-  Secret : \`${data.secret}\`
+  Secret : \`${body.secret}\`
   Ip: \`${req.ip}\``);
-    return res.status(401).send({
-      ok: false,
-    });
+    return res.status(401).send("Invalid secret");
   }
 
-  switch (body.type) {
-    case "purchase":
-      onProductPurchaseAsync(productSchema.parse(body.data));
-      return res.status(200).send("Customer product updated");
-    case "refund":
-      return res.status(201).send("Customer product updated");
+  try {
+    switch (body.type) {
+      case "purchase":
+        await onProductPurchaseAsync(productSchema.parse(body.data));
+        return res.status(200).send("Customer product updated");
+      case "refund":
+        await onProductRefundAsync(body.data);
+        return res.status(201).send("Customer product updated");
 
-    default:
-      return res.status(404).send("Invalid type");
+      default:
+        return res.status(404).send("Invalid type");
+    }
+  } catch (error) {
+    defaultLogger.error(anyToError(error).message);
+    return res.status(500).send("Internal server error");
   }
 });

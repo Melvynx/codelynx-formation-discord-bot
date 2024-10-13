@@ -15,7 +15,7 @@ import { SolutionCreateThread } from "./events/solution/create_thread_solution.c
 import { env } from "./utils/env/env.util";
 import { fastifyServer, startWebhookServer } from "./utils/webhook/server";
 
-const client = new ArcClient(env.TOKEN, {
+export const client = new ArcClient(env.TOKEN, {
   intents: [
     "Guilds",
     "MessageContent",

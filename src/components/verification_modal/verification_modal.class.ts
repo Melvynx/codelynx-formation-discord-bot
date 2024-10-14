@@ -214,7 +214,7 @@ export class VerificationModal extends ModalSubmitComponent {
     }
 
     LynxLogger.info(
-      `VERIFICATION : verified user <@${member.user.id}> with email \`${email}\`, ` +
+      `VERIFICATION : verified user <@${member.user.id}>(${member.user.username}) with email \`${email}\`, ` +
         `giving role ${
           haveDoPresentation
             ? `lynx, link to presentation [message](${haveDoPresentation.url})`

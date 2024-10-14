@@ -69,7 +69,7 @@ export class VerificationRememberTask extends Task {
         );
       } catch (err) {
         defaultLogger.warning(
-          `Unable to send warn message to <@${member.user.id}> with id ${member.id}`
+          `Unable to send warn message to <@${member.user.id}>(${member.user.username}) with id ${member.id}`
         );
       }
     }
@@ -89,7 +89,7 @@ export class VerificationRememberTask extends Task {
         );
       } catch (err) {
         defaultLogger.warning(
-          `Unable to send kick message to <@${member.user.id}> with id ${member.id}`
+          `Unable to send kick message to <@${member.user.id}>(${member.user.username}) with id ${member.id}`
         );
         continue;
       }
@@ -101,7 +101,7 @@ export class VerificationRememberTask extends Task {
         );
       } catch (err) {
         defaultLogger.warning(
-          `Unable to kick <@${member.user.id}> with id ${member.id}`
+          `Unable to kick <@${member.user.id}>(${member.user.username}) with id ${member.id}`
         );
       }
     }

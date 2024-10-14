@@ -24,6 +24,19 @@ export const startWebhookServer = (fastifyServer: FastifyInstance): void =>
 
 fastifyServer.post("/api/webhooks/codeline", async (req, res) => {
   const result = WebhookPayloadSchema.safeParse(req.body);
+  defaultLogger.info(
+    `Codeline Webhook received : \n : ${JSON.stringify(
+      {
+        ...result,
+        data: {
+          ...result.data,
+          secret: "********",
+        },
+      },
+      null,
+      2
+    )}`
+  );
 
   if (!result.success) {
     LynxLogger.warn(
@@ -50,7 +63,7 @@ fastifyServer.post("/api/webhooks/codeline", async (req, res) => {
         return res.status(200).send("Customer product updated");
       case "refund":
         await onProductRefundAsync(body.data);
-        return res.status(201).send("Customer product updated");
+        return res.status(200).send("Customer product updated");
 
       default:
         return res.status(404).send("Invalid type");

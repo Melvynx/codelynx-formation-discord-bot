@@ -2,9 +2,7 @@ import { client } from "@/index";
 import { anyToError, defaultLogger } from "arcscord";
 import { env } from "../env/env.util";
 import { LynxLogger } from "../log/log.util";
-import { CreateNewMemberQuery } from "../prisma/queries/createNewMember.query";
 import { GetBundleQuery } from "../prisma/queries/getBundle.query";
-import { GetMemberQuery } from "../prisma/queries/getMember.query";
 import { GetProductQuery } from "../prisma/queries/getProduct.query";
 import { UpdateMemberQuery } from "../prisma/queries/updateMember.query";
 import type { Product } from "./webhook.type";
@@ -25,25 +23,24 @@ export const onProductPurchaseAsync = async (webhookProduct: Product) => {
 
   if (!bundle && !product)
     throw new Error(`Product "${webhookProduct.itemId}" not found`);
-  const user =
-    (await GetMemberQuery({ where: { id: webhookProduct.userId } })) ??
-    (await CreateNewMemberQuery({
-      data: {
-        id: webhookProduct.userId,
-        email: webhookProduct.email,
-        discordUserId: webhookProduct.userDiscordId,
-      },
-    }));
 
   if (bundle) {
     try {
       await UpdateMemberQuery({
-        where: {
-          id: webhookProduct.userId,
-        },
-        data: {
+        where: { id: webhookProduct.userId },
+        update: {
           discordUserId: webhookProduct.userDiscordId,
-          bundle: {
+          bundles: {
+            connect: {
+              id: bundle.id,
+            },
+          },
+        },
+        create: {
+          id: webhookProduct.userId,
+          email: webhookProduct.email,
+          discordUserId: webhookProduct.userDiscordId,
+          bundles: {
             connect: {
               id: bundle.id,
             },
@@ -53,7 +50,7 @@ export const onProductPurchaseAsync = async (webhookProduct: Product) => {
     } catch (error) {
       defaultLogger.warning(
         `Failed to add bundle ${anyToError(error).message} to member ${
-          user.id
+          webhookProduct.userId
         } in database`
       );
     }
@@ -65,7 +62,17 @@ export const onProductPurchaseAsync = async (webhookProduct: Product) => {
         where: {
           id: webhookProduct.userId,
         },
-        data: {
+        create: {
+          id: webhookProduct.userId,
+          email: webhookProduct.email,
+          discordUserId: webhookProduct.userDiscordId,
+          products: {
+            connect: {
+              id: product.id,
+            },
+          },
+        },
+        update: {
           discordUserId: webhookProduct.userDiscordId,
           products: {
             connect: {
@@ -77,7 +84,7 @@ export const onProductPurchaseAsync = async (webhookProduct: Product) => {
     } catch (error) {
       defaultLogger.warning(
         `Failed to add product ${anyToError(error).message} to member ${
-          user.id
+          webhookProduct.userId
         } in database`
       );
     }
@@ -102,7 +109,7 @@ export const onProductPurchaseAsync = async (webhookProduct: Product) => {
     } catch (error) {
       LynxLogger.warn(
         `Webhook Codeline\nFailed to update member : <@${
-          user.discordUserId
+          webhookProduct.userDiscordId
         }> with product or bundle.\n${anyToError(error).message}`
       );
     }
@@ -125,34 +132,29 @@ export const onProductRefundAsync = async (webhookProduct: Product) => {
     });
   if (!bundle && !product)
     throw new Error(`Product "${webhookProduct.itemId}" not found`);
-  const user =
-    (await GetMemberQuery({ where: { id: webhookProduct.userId } })) ??
-    (await CreateNewMemberQuery({
-      data: {
-        id: webhookProduct.userId,
-        email: webhookProduct.email,
-        discordUserId: webhookProduct.userDiscordId,
-      },
-    }));
+
   if (bundle) {
     try {
       await UpdateMemberQuery({
-        where: {
-          id: webhookProduct.userId,
-        },
-        data: {
+        where: { id: webhookProduct.userId },
+        update: {
           discordUserId: webhookProduct.userDiscordId,
-          bundle: {
+          bundles: {
             disconnect: {
               id: bundle.id,
             },
           },
         },
+        create: {
+          id: webhookProduct.userId,
+          email: webhookProduct.email,
+          discordUserId: webhookProduct.userDiscordId,
+        },
       });
     } catch (error) {
       defaultLogger.warning(
         `Failed to remove bundle ${anyToError(error).message} to member ${
-          user.id
+          webhookProduct.userId
         } in database`
       );
     }
@@ -161,10 +163,8 @@ export const onProductRefundAsync = async (webhookProduct: Product) => {
   if (product) {
     try {
       await UpdateMemberQuery({
-        where: {
-          id: webhookProduct.userId,
-        },
-        data: {
+        where: { id: webhookProduct.userId },
+        update: {
           discordUserId: webhookProduct.userDiscordId,
           products: {
             disconnect: {
@@ -172,11 +172,16 @@ export const onProductRefundAsync = async (webhookProduct: Product) => {
             },
           },
         },
+        create: {
+          id: webhookProduct.userId,
+          email: webhookProduct.email,
+          discordUserId: webhookProduct.userDiscordId,
+        },
       });
     } catch (error) {
       defaultLogger.warning(
         `Failed to remove product ${anyToError(error).message} to member ${
-          user.id
+          webhookProduct.userId
         } in database`
       );
     }
@@ -203,7 +208,7 @@ export const onProductRefundAsync = async (webhookProduct: Product) => {
     } catch (error) {
       defaultLogger.warning(
         `Webhook Codeline\nFailed to update member : <@${
-          user.discordUserId
+          webhookProduct.userDiscordId
         }> with product or bundle.\n${anyToError(error).message}`
       );
     }

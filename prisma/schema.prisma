@@ -54,7 +54,7 @@ model Member {
   discordUserId String?    @unique
   email         String    @unique
   products      Product[]
-  bundle        Bundle[]
+  bundles        Bundle[]
 
 
   createAt      DateTime  @default(now())

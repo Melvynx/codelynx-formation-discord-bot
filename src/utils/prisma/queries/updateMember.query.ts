@@ -1,15 +1,17 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "../prisma.util";
 
-type UpdateMemberQueryType = {
-  where: Prisma.MemberWhereUniqueInput;
-  data: Prisma.MemberUpdateInput;
-};
+type UpdateMemberQueryType = Prisma.MemberUpsertArgs;
 
-export const UpdateMemberQuery = async ({ data, where }: UpdateMemberQueryType) => {
-  const user = await prisma.member.update({
+export const UpdateMemberQuery = async ({
+  create,
+  update,
+  where,
+}: UpdateMemberQueryType) => {
+  await prisma.member.upsert({
     where,
-    data,
+    update,
+    create,
   });
 };
 

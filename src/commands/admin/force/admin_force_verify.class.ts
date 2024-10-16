@@ -53,7 +53,7 @@ export class ForceVerifySubCommand extends SubCommand {
       } catch (addRoleErr) {
         errCount++;
         LynxLogger.warn(
-          `**FORCE VERIFY** : Fail to add Lynx role for <@${member.user.id}> with id ${member.id}`
+          `**FORCE VERIFY** : Fail to add Lynx role for <@${member.user.id}>(${member.user.username}) with id ${member.id}`
         );
         continue;
       }
@@ -63,7 +63,7 @@ export class ForceVerifySubCommand extends SubCommand {
       } catch (removeRoleErr) {
         errCount++;
         LynxLogger.warn(
-          `**FORCE VERIFY** : Fail to remove Verification role for <@${member.user.id}> with id ${member.id}`
+          `**FORCE VERIFY** : Fail to remove Verification role for <@${member.user.id}>(${member.user.username}) with id ${member.id}`
         );
       }
 
@@ -74,12 +74,12 @@ export class ForceVerifySubCommand extends SubCommand {
       } catch (messageError) {
         errCount++;
         LynxLogger.warn(
-          `**FORCE VERIFY** : Fail to send message for <@${member.user.id}> with id ${member.id}`
+          `**FORCE VERIFY** : Fail to send message for <@${member.user.id}>(${member.user.username}) with id ${member.id}`
         );
       }
 
       LynxLogger.info(
-        `**FORCE VERIFY** : update role of <@${member.user.id}>, link to presentation [message](${message.url})`
+        `**FORCE VERIFY** : update role of <@${member.user.id}>(${member.user.username}), link to presentation [message](${message.url})`
       );
     }
 

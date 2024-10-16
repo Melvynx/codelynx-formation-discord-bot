@@ -49,6 +49,34 @@ model XSubject {
   Prompt     XPrompt[]
 }
 
+model Member {
+  id            String    @id
+  discordUserId String?    @unique
+  email         String    @unique
+  products      Product[]
+  bundles        Bundle[]
+
+
+  createAt      DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+}
+
+model Bundle {
+  id       String    @id
+  products Product[]
+  users    Member[]
+}
+
+model Product {
+  id            String   @id
+  name          String
+  premium       Boolean
+  discordRoleId String
+  bundle        Bundle[]
+  users         Member[]
+}
+
 model XPrompt {
   id               String     @id
   version          Int

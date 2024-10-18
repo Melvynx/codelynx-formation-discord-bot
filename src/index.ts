@@ -13,8 +13,9 @@ import { VerificationRememberTask } from "./cron/verification_remeber/verificati
 import { AutoTreads } from "./events/auto_threads/auto_threads.class";
 import { SolutionCreateThread } from "./events/solution/create_thread_solution.class";
 import { env } from "./utils/env/env.util";
+import { fastifyServer, startWebhookServer } from "./utils/webhook/server";
 
-const client = new ArcClient(env.TOKEN, {
+export const client = new ArcClient(env.TOKEN, {
   intents: [
     "Guilds",
     "MessageContent",
@@ -51,4 +52,7 @@ client.on("ready", async () => {
 
   client.taskManager.loadTasks([new VerificationRememberTask(client)]);
 });
+
+void startWebhookServer(fastifyServer);
+
 void client.login();

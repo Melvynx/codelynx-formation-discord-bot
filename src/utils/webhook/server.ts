@@ -1,5 +1,6 @@
-import { anyToError, defaultLogger } from "arcscord";
 import type { FastifyInstance } from "fastify";
+import * as process from "node:process";
+import { anyToError, defaultLogger } from "arcscord";
 import Fastify from "fastify";
 import { env } from "../env/env.util";
 import { LynxLogger } from "../log/log.util";
@@ -13,14 +14,15 @@ export const fastifyServer = Fastify({
   logger: false,
 });
 
-export const startWebhookServer = (fastifyServer: FastifyInstance): void =>
-  fastifyServer.listen({ port: 3000 }, (err, address) => {
+export function startWebhookServer(fastifyServer: FastifyInstance): void {
+  return fastifyServer.listen({ port: 3000 }, (err, address) => {
     if (err) {
       console.error(err);
       process.exit(1);
     }
     defaultLogger.info(`Webhooks serveur start on ${address}`);
   });
+}
 
 fastifyServer.post("/api/webhooks/codeline", async (req, res) => {
   const result = WebhookPayloadSchema.safeParse(req.body);
@@ -34,15 +36,15 @@ fastifyServer.post("/api/webhooks/codeline", async (req, res) => {
         },
       },
       null,
-      2
-    )}`
+      2,
+    )}`,
   );
 
   if (!result.success) {
     LynxLogger.warn(
       `Codeline Webhook invalid payload : \`\`\`
       ${anyToError(result.error).message}
-      \`\`\``
+      \`\`\``,
     );
     return res.status(400).send("Invalid payload");
   }
@@ -68,7 +70,8 @@ fastifyServer.post("/api/webhooks/codeline", async (req, res) => {
       default:
         return res.status(404).send("Invalid type");
     }
-  } catch (error) {
+  }
+  catch (error) {
     defaultLogger.error(anyToError(error).message);
     return res.status(500).send("Internal server error");
   }

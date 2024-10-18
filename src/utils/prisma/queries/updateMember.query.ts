@@ -3,18 +3,14 @@ import { prisma } from "../prisma.util";
 
 type UpdateMemberQueryType = Prisma.MemberUpsertArgs;
 
-export const UpdateMemberQuery = async ({
+export async function updateMemberQuery({
   create,
   update,
   where,
-}: UpdateMemberQueryType) => {
+}: UpdateMemberQueryType) {
   await prisma.member.upsert({
     where,
     update,
     create,
   });
-};
-
-export type UpdateMemberQuery = NonNullable<
-  Prisma.PromiseReturnType<typeof UpdateMemberQuery>
->;
+}

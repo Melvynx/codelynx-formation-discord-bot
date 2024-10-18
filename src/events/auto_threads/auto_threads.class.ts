@@ -1,5 +1,5 @@
 import type { EventHandleResult } from "arcscord";
-import type { ButtonBuilder, Message } from "discord.js";
+import type { ButtonBuilder, ClientEvents, Message } from "discord.js";
 import { renameLinkThreadBuilder } from "@/components/rename_link_thread/rename_link_thread.builder";
 import { env } from "@/utils/env/env.util";
 import { anyToError, defaultLogger, error, Event, EventError, ok } from "arcscord";
@@ -49,7 +49,7 @@ export class AutoTreads extends Event<"messageCreate"> {
         }
         catch (e) {
           defaultLogger.logError(new EventError({
-            event: this,
+            event: this as Event<keyof ClientEvents>,
             message: "failed to auto delete invalid link warning",
             baseError: anyToError(e),
           }));
@@ -60,7 +60,7 @@ export class AutoTreads extends Event<"messageCreate"> {
         }
         catch (e) {
           defaultLogger.logError(new EventError({
-            event: this,
+            event: this as Event<keyof ClientEvents>,
             message: "failed to send invalid link message",
             baseError: anyToError(e),
           }));
@@ -71,7 +71,7 @@ export class AutoTreads extends Event<"messageCreate"> {
     }
     catch (e) {
       return error(new EventError({
-        event: this,
+        event: this as Event<keyof ClientEvents>,
         message: "failed to send invalid link message",
         baseError: anyToError(e),
       }));
@@ -81,7 +81,7 @@ export class AutoTreads extends Event<"messageCreate"> {
   async linkChannel(message: Message): Promise<EventHandleResult> {
     if (message.channel.type !== ChannelType.GuildText) {
       return error(new EventError({
-        event: this,
+        event: this as Event<keyof ClientEvents>,
         message: "invalid channel type for links channel",
         debugs: {
           get: message.channel.type,
@@ -107,7 +107,7 @@ export class AutoTreads extends Event<"messageCreate"> {
     }
     catch (err) {
       return error(new EventError({
-        event: this,
+        event: this as Event<keyof ClientEvents>,
         message: "failed to fetch site",
         baseError: anyToError(err),
         debugs: {
@@ -135,7 +135,7 @@ export class AutoTreads extends Event<"messageCreate"> {
     }
     catch (e) {
       return error(new EventError({
-        event: this,
+        event: this as Event<keyof ClientEvents>,
         message: "failed to start thread",
         baseError: anyToError(e),
       }));
@@ -145,7 +145,7 @@ export class AutoTreads extends Event<"messageCreate"> {
   async presentation(message: Message): Promise<EventHandleResult> {
     if (message.channel.type !== ChannelType.GuildText) {
       return error(new EventError({
-        event: this,
+        event: this as Event<keyof ClientEvents>,
         message: "invalid channel type for presentation channel",
         debugs: {
           get: message.channel.type,
@@ -162,7 +162,7 @@ export class AutoTreads extends Event<"messageCreate"> {
     }
     catch (e) {
       return error(new EventError({
-        event: this,
+        event: this as Event<keyof ClientEvents>,
         message: "failed to start thread",
         baseError: anyToError(e),
       }));
@@ -174,7 +174,7 @@ export class AutoTreads extends Event<"messageCreate"> {
     }
     catch (e) {
       return error(new EventError({
-        event: this,
+        event: this as Event<keyof ClientEvents>,
         message: "failed to add lynx role",
         baseError: anyToError(e),
       }));

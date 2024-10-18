@@ -1,4 +1,4 @@
-import type { CommandRunContext, CommandRunResult } from "arcscord";
+import type { CommandRunContext, CommandRunResult, GuildTextFirstBasedChannel } from "arcscord";
 import type { ButtonBuilder } from "discord.js";
 import { verifyButtonBuilder } from "@/components/verify_button/verify_button.builder";
 import { anyToError, CommandError, error, SubCommand } from "arcscord";
@@ -22,7 +22,7 @@ export class SetupVerifySubCommand extends SubCommand {
     );
 
     try {
-      await ctx.interaction.channel?.send({
+      await (ctx.interaction.channel as unknown as GuildTextFirstBasedChannel)?.send({
         embeds: [embed],
         components: [components],
       });

@@ -1,3 +1,5 @@
+import type { Event } from "arcscord";
+import type { ClientEvents } from "discord.js";
 import { UnverifiedMemberListCommand } from "@/commands/unverified_member_list/unverified_member_list.class";
 import { ArcClient } from "arcscord";
 import { AdminCommand } from "./commands/admin/admin.class";
@@ -25,7 +27,7 @@ export const client = new ArcClient(env.TOKEN, {
   ],
 });
 const events = [new AutoTreads(client), new SolutionCreateThread(client)];
-void client.eventManager.loadEvents(events);
+void client.eventManager.loadEvents(events as Event<keyof ClientEvents>[]);
 client.componentManager.loadComponents([
   new NewLinkThreadName(client),
   new RenameLinkThread(client),

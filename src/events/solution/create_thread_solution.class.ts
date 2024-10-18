@@ -9,7 +9,7 @@ export class SolutionCreateThread extends Event<"threadCreate"> {
   name = "SolutionCreateThread";
 
   async handle(
-    thread: AnyThreadChannel<boolean>,
+    thread: AnyThreadChannel,
     newlyCreated: boolean,
   ): Promise<EventHandleResult> {
     if (

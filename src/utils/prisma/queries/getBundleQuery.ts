@@ -5,7 +5,7 @@ type GetBundleQueryType = {
   where: Prisma.BundleWhereUniqueInput;
 };
 
-export const GetBundleQuery = async ({ where }: GetBundleQueryType) => {
+export async function getBundleQuery({ where }: GetBundleQueryType) {
   const bundle = await prisma.bundle.findFirst({
     where,
     include: {
@@ -14,6 +14,4 @@ export const GetBundleQuery = async ({ where }: GetBundleQueryType) => {
   });
 
   return bundle;
-};
-
-export type GetBundleQuery = Prisma.PromiseReturnType<typeof GetBundleQuery>;
+}

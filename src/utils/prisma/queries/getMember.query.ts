@@ -5,12 +5,12 @@ type GetMemberQueryProps = {
   where: Prisma.MemberWhereUniqueInput;
 };
 
-export const GetMemberQuery = async ({ where }: GetMemberQueryProps) => {
+export async function getMemberQuery({ where }: GetMemberQueryProps) {
   const member = await prisma.member.findUnique({
     where,
     include: {
       products: true,
-      bundle: {
+      bundles: {
         include: {
           products: true,
         },
@@ -19,6 +19,4 @@ export const GetMemberQuery = async ({ where }: GetMemberQueryProps) => {
   });
 
   return member;
-};
-
-export type GetMemberQuery = Prisma.PromiseReturnType<typeof GetMemberQuery>;
+}

@@ -5,12 +5,10 @@ type GetProductQueryType = {
   where: Prisma.ProductWhereUniqueInput;
 };
 
-export const GetProductQuery = async ({ where }: GetProductQueryType) => {
+export async function getProductQuery({ where }: GetProductQueryType) {
   const product = await prisma.product.findFirst({
     where,
   });
 
   return product;
-};
-
-export type GetProductQuery = Prisma.PromiseReturnType<typeof GetProductQuery>;
+}

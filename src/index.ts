@@ -13,6 +13,7 @@ import { VerificationModal } from "./components/verification_modal/verification_
 import { VerifyButton } from "./components/verify_button/verify.button.class";
 import { VerificationRememberTask } from "./cron/verification_remeber/verification_remember.task";
 import { AutoTreads } from "./events/auto_threads/auto_threads.class";
+import { ClosedTicketLimit } from "./events/closedTicketLimit/closedTicketLimit.class";
 import { SolutionCreateThread } from "./events/solution/create_thread_solution.class";
 import { env } from "./utils/env/env.util";
 import { fastifyServer, startWebhookServer } from "./utils/webhook/server";
@@ -26,7 +27,12 @@ export const client = new ArcClient(env.TOKEN, {
     "DirectMessages",
   ],
 });
-const events = [new AutoTreads(client), new SolutionCreateThread(client)];
+const events = [
+  new AutoTreads(client),
+  new SolutionCreateThread(client),
+  new ClosedTicketLimit(client),
+];
+
 void client.eventManager.loadEvents(events as Event<keyof ClientEvents>[]);
 client.componentManager.loadComponents([
   new NewLinkThreadName(client),

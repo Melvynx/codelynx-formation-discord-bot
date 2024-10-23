@@ -54,4 +54,6 @@ export const envSchema = z.object({
 
   DAY_TO_WARN: z.string(),
   DAY_TO_KICK: z.string(),
+
+  CLOSED_TICKET_LIMIT: z.string().transform(v => Number(v)),
 });

@@ -1,10 +1,9 @@
 import type { EventHandleResult } from "arcscord";
-import type { ButtonBuilder, ClientEvents, Message, NonThreadGuildBasedChannel } from "discord.js";
-import { renameLinkThreadBuilder } from "@/components/rename_link_thread/rename_link_thread.builder";
+import type { ClientEvents, NonThreadGuildBasedChannel } from "discord.js";
 import { env } from "@/utils/env/env.util";
 import { LynxLogger } from "@/utils/log/log.util";
-import { anyToError, defaultLogger, error, Event, EventError, ok } from "arcscord";
-import { ActionRowBuilder, ChannelType, ThreadAutoArchiveDuration } from "discord.js";
+import { anyToError, defaultLogger, Event, EventError, ok } from "arcscord";
+import { ChannelType } from "discord.js";
 
 export class ClosedTicketLimit extends Event<"channelUpdate"> {
   event = "channelUpdate" as const;

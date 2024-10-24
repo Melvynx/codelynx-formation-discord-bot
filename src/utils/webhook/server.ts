@@ -15,7 +15,7 @@ export const fastifyServer = Fastify({
 });
 
 export function startWebhookServer(fastifyServer: FastifyInstance): void {
-  return fastifyServer.listen({ port: 3000 }, (err, address) => {
+  return fastifyServer.listen({ port: 80 }, (err, address) => {
     if (err) {
       console.error(err);
       process.exit(1);

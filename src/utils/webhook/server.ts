@@ -26,7 +26,7 @@ app.get("/health", async (c) => {
 });
 
 app.post("/api/webhooks/codeline", async (c) => {
-  const result = WebhookPayloadSchema.safeParse(c.req.parseBody());
+  const result = WebhookPayloadSchema.safeParse(await c.req.parseBody());
   defaultLogger.info(
     `Codeline Webhook received : \n : ${JSON.stringify(
       {

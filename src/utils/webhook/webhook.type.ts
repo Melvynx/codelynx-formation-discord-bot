@@ -8,7 +8,7 @@ export const productSchema = z.object({
   userDiscordId: z.string().optional(),
   email: z.string().email(),
   createdAt: z.string().datetime(),
-  amount: z.number().positive(),
+  amount: z.number(),
   currency: z.string(),
 
   // Item can be a product or a bundle

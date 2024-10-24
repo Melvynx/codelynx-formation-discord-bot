@@ -1,7 +1,9 @@
 import type { FastifyInstance } from "fastify";
 import * as process from "node:process";
+import { serve } from "@hono/node-server";
 import { anyToError, defaultLogger } from "arcscord";
 import Fastify from "fastify";
+import { Hono } from "hono";
 import { env } from "../env/env.util";
 import { LynxLogger } from "../log/log.util";
 import {
@@ -10,22 +12,21 @@ import {
 } from "./codeline-webhook.utils";
 import { productSchema, WebhookPayloadSchema } from "./webhook.type";
 
-export const fastifyServer = Fastify({
-  logger: false,
-});
+const app = new Hono();
 
-export function startWebhookServer(fastifyServer: FastifyInstance): void {
-  return fastifyServer.listen({ port: 80 }, (err, address) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    defaultLogger.info(`Webhooks serveur start on ${address}`);
+export function startWebhookServer() {
+  return serve({
+    fetch: app.fetch,
+    port: Number(process.env.PORT) ?? 3000,
   });
 }
 
-fastifyServer.post("/api/webhooks/codeline", async (req, res) => {
-  const result = WebhookPayloadSchema.safeParse(req.body);
+app.get("/health", async (c) => {
+  return c.json({ message: "OK" }, 200);
+});
+
+app.post("/api/webhooks/codeline", async (c) => {
+  const result = WebhookPayloadSchema.safeParse(c.req.parseBody());
   defaultLogger.info(
     `Codeline Webhook received : \n : ${JSON.stringify(
       {
@@ -46,33 +47,42 @@ fastifyServer.post("/api/webhooks/codeline", async (req, res) => {
       ${anyToError(result.error).message}
       \`\`\``,
     );
-    return res.status(400).send("Invalid payload");
+    return c.json(
+      {
+        message: "Invalid payload",
+      },
+      400,
+    );
   }
 
   const body = result.data;
 
   if (body.secret !== env.CODELINE_WEBHOOK_SECRET) {
     LynxLogger.warn(`Codeline Webhook invalid secret.
-  Secret : \`${body.secret}\`
-  Ip: \`${req.ip}\``);
-    return res.status(401).send("Invalid secret");
+  Secret : \`${body.secret}\``);
+    return c.json(
+      {
+        message: "Invalid secret",
+      },
+      401,
+    );
   }
 
   try {
     switch (body.type) {
       case "purchase":
         await onProductPurchaseAsync(productSchema.parse(body.data));
-        return res.status(200).send("Customer product updated");
+        return c.json({ message: "Customer product updated" }, 200);
       case "refund":
         await onProductRefundAsync(body.data);
-        return res.status(200).send("Customer product updated");
+        return c.json({ message: "Customer product updated" }, 200);
 
       default:
-        return res.status(404).send("Invalid type");
+        return c.json({ message: "Invalid type" }, 404);
     }
   }
   catch (error) {
     defaultLogger.error(anyToError(error).message);
-    return res.status(500).send("Internal server error");
+    return c.json({ message: "Internal server error" }, 500);
   }
 });

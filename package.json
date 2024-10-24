@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@googleapis/youtube": "^19.0.0",
+    "@hono/node-server": "^1.13.2",
     "@prisma/client": "5.19.1",
     "@sapphire/snowflake": "^3.5.3",
     "@swc-node/core": "^1.13.1",
@@ -35,6 +36,7 @@
     "discord.js": "^14.15.2",
     "dotenv": "^16.4.5",
     "fastify": "^4.28.1",
+    "hono": "^4.6.6",
     "openai": "4.67.3",
     "ts-log": "^2.2.7",
     "tsconfig-paths": "^4.2.0",

@@ -11,6 +11,9 @@ importers:
       '@googleapis/youtube':
         specifier: ^19.0.0
         version: 19.0.0
+      '@hono/node-server':
+        specifier: ^1.13.2
+        version: 1.13.2(hono@4.6.6)
       '@prisma/client':
         specifier: 5.19.1
         version: 5.19.1(prisma@5.19.1)
@@ -44,6 +47,9 @@ importers:
       fastify:
         specifier: ^4.28.1
         version: 4.28.1
+      hono:
+        specifier: ^4.6.6
+        version: 4.6.6
       openai:
         specifier: 4.67.3
         version: 4.67.3(zod@3.23.8)
@@ -552,6 +558,12 @@ packages:
   '@googleapis/youtube@19.0.0':
     resolution: {integrity: sha512-nAy9RVazuDw/nfpo5tn/JXTrKolwJ0NWKQDjDOh/+5knO7DtBn9QR0o9p4y4GuYnmuUJZQb8D52D5D9paOiibw==}
     engines: {node: '>=12.0.0'}
+
+  '@hono/node-server@1.13.2':
+    resolution: {integrity: sha512-0w8nEmAyx0Ul0CQp8BL2VtAG4YVdpzXd/mvvM+l0G5Oq22pUyHS+KeFFPSY+czLOF5NAiV3MUNPD1n14Ol5svg==}
+    engines: {node: '>=18.14.1'}
+    peerDependencies:
+      hono: ^4
 
   '@humanfs/core@0.19.0':
     resolution: {integrity: sha512-2cbWIHbZVEweE853g8jymffCA+NCMiuqeECeBBLm8dg2oFdjuGJhgN4UAbI+6v0CKbbhvtXA4qV8YR5Ji86nmw==}
@@ -1723,6 +1735,10 @@ packages:
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
+
+  hono@4.6.6:
+    resolution: {integrity: sha512-euUj5qwvtkG+p38GFs0LYacwaoS2hYRAGn9ysAggiwT2QBcPnT1XYUCW3hatW4C1KzAXTYuQ08BlVDJtAGuhlg==}
+    engines: {node: '>=16.9.0'}
 
   hosted-git-info@2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==}
@@ -3243,6 +3259,10 @@ snapshots:
       - encoding
       - supports-color
 
+  '@hono/node-server@1.13.2(hono@4.6.6)':
+    dependencies:
+      hono: 4.6.6
+
   '@humanfs/core@0.19.0': {}
 
   '@humanfs/node@0.16.5':
@@ -4569,6 +4589,8 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
+
+  hono@4.6.6: {}
 
   hosted-git-info@2.8.9: {}
 

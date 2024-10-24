@@ -16,7 +16,7 @@ import { AutoTreads } from "./events/auto_threads/auto_threads.class";
 import { ClosedTicketLimit } from "./events/closedTicketLimit/closedTicketLimit.class";
 import { SolutionCreateThread } from "./events/solution/create_thread_solution.class";
 import { env } from "./utils/env/env.util";
-import { fastifyServer, startWebhookServer } from "./utils/webhook/server";
+import { startWebhookServer } from "./utils/webhook/server";
 
 export const client = new ArcClient(env.TOKEN, {
   intents: [
@@ -61,6 +61,6 @@ client.on("ready", async () => {
   client.taskManager.loadTasks([new VerificationRememberTask(client)]);
 });
 
-void startWebhookServer(fastifyServer);
+void startWebhookServer()
 
 void client.login();

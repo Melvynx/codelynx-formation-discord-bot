@@ -51,12 +51,10 @@ model XSubject {
 
 model Member {
   id            String    @id
-  discordUserId String?    @unique
+  discordUserId String?   @unique
   email         String    @unique
   products      Product[]
-  bundles        Bundle[]
-
-
+  bundles       Bundle[]
   createAt      DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   deletedAt     DateTime?

@@ -1,11 +1,8 @@
-import type { FastifyInstance } from "fastify";
 import * as process from "node:process";
 import { serve } from "@hono/node-server";
 import { anyToError, defaultLogger } from "arcscord";
-import Fastify from "fastify";
 import { Hono } from "hono";
 import { env } from "../env/env.util";
-import { LynxLogger } from "../log/log.util";
 import {
   onProductPurchaseAsync,
   onProductRefundAsync,
@@ -42,7 +39,7 @@ app.post("/api/webhooks/codeline", async (c) => {
   );
 
   if (!result.success) {
-    LynxLogger.warn(
+    defaultLogger.warning(
       `Codeline Webhook invalid payload : \`\`\`
       ${anyToError(result.error).message}
       \`\`\``,
@@ -58,7 +55,7 @@ app.post("/api/webhooks/codeline", async (c) => {
   const body = result.data;
 
   if (body.secret !== env.CODELINE_WEBHOOK_SECRET) {
-    LynxLogger.warn(`Codeline Webhook invalid secret.
+    defaultLogger.warning(`Codeline Webhook invalid secret.
   Secret : \`${body.secret}\``);
     return c.json(
       {

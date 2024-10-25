@@ -61,6 +61,6 @@ client.on("ready", async () => {
   client.taskManager.loadTasks([new VerificationRememberTask(client)]);
 });
 
-void startWebhookServer()
+void startWebhookServer();
 
 void client.login();

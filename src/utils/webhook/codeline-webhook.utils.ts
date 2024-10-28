@@ -108,8 +108,10 @@ export async function onProductPurchaseAsync(webhookProduct: Product) {
         );
       }
 
+      const rolesString = product ? `<@&${product?.discordRoleId}>` : bundle ? bundle.products.map(p => (`<@&${p?.discordRoleId}>`)).join(" ,") : null;
+
       LynxLogger.info(`New product purchase
-        Added role(s) to <@${member.user.id}>(${member.user.username}) with
+        Added role${bundle ? "s" : null} ${rolesString} to <@${member.user.id}>(${member.user.username}) with
       ${product ? `product ${product.name}` : ""}
       ${bundle ? `bundle ${bundle.products.map(p => p.name).join(", ")}` : ""}`);
     }
@@ -214,8 +216,10 @@ export async function onProductRefundAsync(webhookProduct: Product) {
         );
       }
 
+      const rolesString = product ? `<@&${product?.discordRoleId}>` : bundle ? bundle.products.map(p => (`<@&${p?.discordRoleId}>`)).join(" ,") : null;
+
       LynxLogger.info(`New product refund
-        Added role(s) to <@${member.user.id}>(${member.user.username}) with
+        Removed role${bundle ? "s" : null} ${rolesString} to <@${member.user.id}>(${member.user.username}) with
       ${product ? `product ${product.name}` : ""}
       ${bundle ? `bundle ${bundle.products.map(p => p.name).join(", ")}` : ""}`);
     }

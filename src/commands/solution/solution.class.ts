@@ -1,8 +1,8 @@
 import type { CommandRunContext, CommandRunResult, MessageCommand } from "arcscord";
 import type { GuildMember, PublicThreadChannel } from "discord.js";
 import { env } from "@/utils/env/env.util";
-import { Command } from "arcscord";
-import { ChannelType, EmbedBuilder } from "discord.js";
+import { Command, ok } from "arcscord";
+import { ChannelType, EmbedBuilder, ThreadAutoArchiveDuration } from "discord.js";
 import { solutionMessageBuilder } from "./solution.builder";
 
 export class SolutionCommand extends Command implements MessageCommand {
@@ -77,6 +77,8 @@ export class SolutionCommand extends Command implements MessageCommand {
       ...thread.appliedTags,
     ]);
 
+    await thread.setAutoArchiveDuration(ThreadAutoArchiveDuration.OneHour);
+
     const embed = new EmbedBuilder()
       .setTitle("✅ **Succès !**")
       .setDescription(
@@ -89,7 +91,9 @@ export class SolutionCommand extends Command implements MessageCommand {
       })
       .setColor("#01be61");
 
-    return this.reply(ctx, { embeds: [embed] });
+    await this.reply(ctx, { embeds: [embed] });
+    await thread.setArchived(true);
+    return ok(true);
   }
 
   isThreadAllReadyResolved = (thread: PublicThreadChannel): boolean => {

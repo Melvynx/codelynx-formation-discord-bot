@@ -1,7 +1,11 @@
 import type { EventHandleResult } from "arcscord";
+import type { AnyThreadChannel, ClientEvents } from "discord.js";
 import { env } from "@/utils/env/env.util";
-import { Event, ok } from "arcscord";
-import { type AnyThreadChannel, ChannelType, EmbedBuilder } from "discord.js";
+
+import { anyToError, defaultLogger, Event, EventError, ok } from "arcscord";
+import { ChannelType } from "discord.js";
+import { createPostEmbedBuilder } from "./createPostEmbed.builder";
+import { informationEntraideEmbedBuilder } from "./infomationEntraideEmbed.builder";
 
 export class SolutionCreateThread extends Event<"threadCreate"> {
   event = "threadCreate" as const;
@@ -20,17 +24,33 @@ export class SolutionCreateThread extends Event<"threadCreate"> {
       return ok(true);
     }
 
-    const embed = new EmbedBuilder()
-      .setTitle("Post crée !")
-      .setDescription(
-        ":white_check_mark: Une fois le post résolu, vous pouvez marquer le message qui vous a aidé avec : `clic droit -> Applications -> Marquer comme solution.`",
-      )
-      .setColor("#5865f2")
-      .setImage(
-        "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExdXRzOXowMjF3c3IzNnJtc2RrcDB4a3J2YTdjNnp1MzNmMDhmY2Q5dCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Gj1ZajxelyQtMQc4ar/giphy.gif",
-      );
+    try {
+      const createPostEmbed = createPostEmbedBuilder();
+      await thread.send({ embeds: [createPostEmbed] });
+    }
+    catch (e) {
+      defaultLogger.logError(new EventError({
+        event: this as Event<keyof ClientEvents>,
+        message: "failed to send create post embed in the new thread",
+        baseError: anyToError(e),
+      }));
+    }
 
-    await thread.send({ embeds: [embed] });
+    try {
+      const generalChannel = thread.guild.channels.cache.get(env.GENERAL_CHANNEL_ID);
+      if (generalChannel?.type !== ChannelType.GuildText)
+        throw new EventError({ event: this as Event<keyof ClientEvents> });
+
+      const informationEmbed = informationEntraideEmbedBuilder(thread.id);
+      generalChannel.send({ embeds: [informationEmbed] });
+    }
+    catch (e) {
+      defaultLogger.logError(new EventError({
+        event: this as Event<keyof ClientEvents>,
+        message: "General channel not found",
+        baseError: anyToError(e),
+      }));
+    }
 
     return ok("Solution information message send");
   }

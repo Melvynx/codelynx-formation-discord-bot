@@ -25,6 +25,7 @@ export const envSchema = z.object({
   CLOSED_TICKET_CATEGORY_ID: z.string(),
 
   // DISCORD CHANNELS IDS
+  GENERAL_CHANNEL_ID: z.string(),
   LINKS_CHANNEL_ID: z.string(),
   HELP_CHANNEL_ID: z.string(),
   PRESENTATION_CHANNEL_ID: z.string(),

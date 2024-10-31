@@ -1,6 +1,7 @@
 import type { CommandRunContext, CommandRunResult } from "arcscord";
 import { getUnverifiedMembers } from "@/cron/verification_remeber/verification_remember.helper";
 import { env } from "@/utils/env/env.util";
+import { displayName } from "@/utils/format/formatUser";
 import { LynxLogger } from "@/utils/log/log.util";
 import { getPresentationMessages } from "@/utils/messages/message.util";
 import { anyToError, CommandError, error, SubCommand } from "arcscord";
@@ -56,7 +57,7 @@ export class ForceVerifySubCommand extends SubCommand {
       catch (addRoleErr) {
         errCount++;
         LynxLogger.warn(
-          `**FORCE VERIFY** : Fail to add Lynx role for <@${member.user.id}>(${member.user.username}) with id ${member.id}, cause : ${anyToError(addRoleErr).message}`,
+          `**FORCE VERIFY** : Fail to add Lynx role for ${displayName(member)} with id ${member.id}, cause : ${anyToError(addRoleErr).message}`,
         );
         continue;
       }
@@ -67,7 +68,7 @@ export class ForceVerifySubCommand extends SubCommand {
       catch (removeRoleErr) {
         errCount++;
         LynxLogger.warn(
-          `**FORCE VERIFY** : Fail to remove Verification role for <@${member.user.id}>(${member.user.username}) with id ${member.id}, cause : ${anyToError(removeRoleErr).message}`,
+          `**FORCE VERIFY** : Fail to remove Verification role for ${displayName(member)} with id ${member.id}, cause : ${anyToError(removeRoleErr).message}`,
         );
       }
 
@@ -79,12 +80,12 @@ export class ForceVerifySubCommand extends SubCommand {
       catch (messageError) {
         errCount++;
         LynxLogger.warn(
-          `**FORCE VERIFY** : Fail to send message for <@${member.user.id}>(${member.user.username}) with id ${member.id}, cause : ${anyToError(messageError).message}`,
+          `**FORCE VERIFY** : Fail to send message for ${displayName(member)} with id ${member.id}, cause : ${anyToError(messageError).message}`,
         );
       }
 
       LynxLogger.info(
-        `**FORCE VERIFY** : update role of <@${member.user.id}>(${member.user.username}), link to presentation [message](${message.url})`,
+        `**FORCE VERIFY** : update role of ${displayName(member)}, link to presentation [message](${message.url})`,
       );
     }
 

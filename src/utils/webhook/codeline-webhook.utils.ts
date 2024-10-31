@@ -2,6 +2,7 @@ import type { Product } from "./webhook.type";
 import { client } from "@/index";
 import { anyToError, defaultLogger } from "arcscord";
 import { env } from "../env/env.util";
+import { displayName } from "../format/formatUser";
 import { LynxLogger } from "../log/log.util";
 import { getBundleQuery } from "../prisma/queries/getBundleQuery";
 import { getProductQuery } from "../prisma/queries/getProduct.query";
@@ -111,7 +112,7 @@ export async function onProductPurchaseAsync(webhookProduct: Product) {
       const rolesString = product ? `<@&${product?.discordRoleId}>` : bundle ? bundle.products.map(p => (`<@&${p?.discordRoleId}>`)).join(" ,") : null;
 
       LynxLogger.info(`New product purchase
-        Added role${bundle ? "s" : null} ${rolesString} to <@${member.user.id}>(${member.user.username}) with
+        Added role${bundle ? "s" : null} ${rolesString} to ${displayName(member)} with
       ${product ? `product ${product.name}` : ""}
       ${bundle ? `bundle ${bundle.products.map(p => p.name).join(", ")}` : ""}`);
     }
@@ -119,7 +120,7 @@ export async function onProductPurchaseAsync(webhookProduct: Product) {
       LynxLogger.warn(
         `Webhook Codeline\nFailed to update member : <@${
           webhookProduct.userDiscordId
-        }> with product or bundle.\n${anyToError(error).message}`,
+        }>\`${webhookProduct.email}\` with product or bundle.\n${anyToError(error).message}`,
       );
     }
   }
@@ -219,7 +220,7 @@ export async function onProductRefundAsync(webhookProduct: Product) {
       const rolesString = product ? `<@&${product?.discordRoleId}>` : bundle ? bundle.products.map(p => (`<@&${p?.discordRoleId}>`)).join(" ,") : null;
 
       LynxLogger.info(`New product refund
-        Removed role${bundle ? "s" : null} ${rolesString} to <@${member.user.id}>(${member.user.username}) with
+        Removed role${bundle ? "s" : null} ${rolesString} to ${displayName(member)} with
       ${product ? `product ${product.name}` : ""}
       ${bundle ? `bundle ${bundle.products.map(p => p.name).join(", ")}` : ""}`);
     }
@@ -227,7 +228,7 @@ export async function onProductRefundAsync(webhookProduct: Product) {
       defaultLogger.warning(
         `Webhook Codeline\nFailed to update member : <@${
           webhookProduct.userDiscordId
-        }> with product or bundle.\n${anyToError(error).message}`,
+        }>\`${webhookProduct.email}\` with product or bundle.\n${anyToError(error).message}`,
       );
     }
   }

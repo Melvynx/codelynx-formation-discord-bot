@@ -1,6 +1,7 @@
 import type { TaskResult, TaskType } from "arcscord";
 import { getTicketsChannels } from "@/utils/chanels/chanels.utils";
 import { env } from "@/utils/env/env.util";
+import { displayName } from "@/utils/format/formatUser";
 import { LynxLogger } from "@/utils/log/log.util";
 import { anyToError, defaultLogger, error, ok, Task, TaskError } from "arcscord";
 import { differenceInDays, subDays } from "date-fns";
@@ -61,9 +62,7 @@ export class VerificationRememberTask extends Task {
       try {
         await member.send({ embeds: [verificationWarnEmbedBuilder(member)] });
         LynxLogger.info(
-          `**VERIFICATION_REMEMBER** : <@${
-            member.id
-          }> à reçut un rappel de vérification. Il est présent sur le serveur de puis ${
+          `**VERIFICATION_REMEMBER** : ${displayName(member)} à reçut un rappel de vérification. Il est présent sur le serveur de puis ${
             member.joinedTimestamp
               ? differenceInDays(Date.now(), member.joinedTimestamp)
               : "inconnue"
@@ -72,7 +71,10 @@ export class VerificationRememberTask extends Task {
       }
       catch (err) {
         defaultLogger.warning(
-          `Unable to send warn message to <@${member.user.id}>(${member.user.username}) with id ${member.id},  cause : ${anyToError(err).message}`,
+          `Unable to send warn message to ${displayName(member)} with id ${member.id},  cause : ${anyToError(err).message}`,
+        );
+        defaultLogger.warning(
+          `Unable to send warn message to ${displayName(member)} with id ${member.id},  cause : ${anyToError(err).message}`,
         );
       }
     }
@@ -83,9 +85,7 @@ export class VerificationRememberTask extends Task {
       try {
         await member.send({ embeds: [verificationKickEmbedBuilder()] });
         LynxLogger.info(
-          `**VERIFICATION_REMEMBER** : <@${
-            member.id
-          }> à reçut une explication de kick. Il est présent sur le serveur de puis ${
+          `**VERIFICATION_REMEMBER** : ${displayName(member)} à reçut une explication de kick. Il est présent sur le serveur de puis ${
             member.joinedTimestamp
               ? differenceInDays(Date.now(), member.joinedTimestamp)
               : "inconnue"
@@ -94,7 +94,7 @@ export class VerificationRememberTask extends Task {
       }
       catch (err) {
         defaultLogger.warning(
-          `Unable to send kick message to <@${member.user.id}>(${member.user.username}) with id ${member.id}, cause : ${anyToError(err).message}`,
+          `Unable to send kick message to ${displayName(member)} with id ${member.id}, cause : ${anyToError(err).message}`,
         );
         continue;
       }
@@ -102,12 +102,12 @@ export class VerificationRememberTask extends Task {
       try {
         await member.kick();
         LynxLogger.info(
-          `**VERIFICATION_REMEMBER** : <@${member.id}> à été kick due à la non vérification de son compte`,
+          `**VERIFICATION_REMEMBER** : ${displayName(member)} à été kick due à la non vérification de son compte`,
         );
       }
       catch (err) {
         defaultLogger.warning(
-          `Unable to kick <@${member.user.id}>(${member.user.username}) with id ${member.id}, cause : ${anyToError(err).message}`,
+          `Unable to kick ${displayName(member)} with id ${member.id}, cause : ${anyToError(err).message}`,
         );
       }
     }

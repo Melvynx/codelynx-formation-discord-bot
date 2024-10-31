@@ -1,6 +1,7 @@
 import type { ModalSubmitRunContext, ModalSubmitRunResult } from "arcscord";
 import type { GuildMember } from "discord.js";
 import { CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE } from "@/utils/api/codeline/codeline.role-mapping";
+import { displayName } from "@/utils/format/formatUser";
 import { LynxLogger } from "@/utils/log/log.util";
 import { getPresentationMessages } from "@/utils/messages/message.util";
 import {
@@ -220,7 +221,7 @@ export class VerificationModal extends ModalSubmitComponent {
     }
 
     LynxLogger.info(
-      `VERIFICATION : verified user <@${member.user.id}>(${member.user.username}) with email \`${email}\`, `
+      `VERIFICATION : verified user ${displayName(member)} with email \`${email}\`, `
       + `giving role ${
         haveDoPresentation
           ? `lynx, link to presentation [message](${haveDoPresentation.url})`

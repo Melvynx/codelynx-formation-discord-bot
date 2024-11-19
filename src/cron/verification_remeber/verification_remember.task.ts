@@ -24,7 +24,7 @@ export class VerificationRememberTask extends Task {
     if (!ticketChannels) {
       return error(
         new TaskError({
-          message: "Unable to fetch ticketChannels",
+          message: "Unable to fetch ticketChannels", 
           task: this,
         }),
       );

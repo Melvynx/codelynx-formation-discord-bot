@@ -1,20 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch"]
-}
-
-datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
-}
-
 model XPost {
   id             String     @id
   content        String
@@ -47,34 +30,6 @@ model XSubject {
   title      String
   summary    String
   Prompt     XPrompt[]
-}
-
-model Member {
-  id            String    @id
-  discordUserId String?    @unique
-  email         String    @unique
-  products      Product[]
-  bundles        Bundle[]
-
-
-  createAt      DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  deletedAt     DateTime?
-}
-
-model Bundle {
-  id       String    @id
-  products Product[]
-  users    Member[]
-}
-
-model Product {
-  id            String   @id
-  name          String
-  premium       Boolean
-  discordRoleId String
-  bundle        Bundle[]
-  users         Member[]
 }
 
 model XPrompt {

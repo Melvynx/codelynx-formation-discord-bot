@@ -1,0 +1,14 @@
+model Bundle {
+  id       String    @id
+  products Product[]
+  users    Member[]
+}
+
+model Product {
+  id            String   @id
+  name          String
+  premium       Boolean
+  discordRoleId String
+  bundle        Bundle[]
+  users         Member[]
+}

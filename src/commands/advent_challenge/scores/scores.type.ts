@@ -6,5 +6,5 @@ export const adventScoreSchema = z.object({
 });
 export const adventScoresSchema = z.array(adventScoreSchema);
 
-export type adventScoreSchema = z.infer<typeof adventScoreSchema>;
-export type adventScoresSchema = z.infer<typeof adventScoresSchema>;
+export type adventScore = z.infer<typeof adventScoreSchema>;
+export type adventScores = z.infer<typeof adventScoresSchema>;

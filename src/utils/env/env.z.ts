@@ -32,7 +32,7 @@ export const envSchema = z.object({
   WELCOME_CHANNEL_ID: z.string(),
   VERIFICATION_CHANNEL_ID: z.string(),
   CREATE_TICKET_CHANEL_ID: z.string(),
-  ADEVENT_CHALLENGE_CHANNEL_ID: z.string(),
+  ADVENT_CHALLENGE_CHANNEL_ID: z.string(),
 
   // DISCORD ROLES IDS
   VERIFY_ROLE_ID: z.string(),

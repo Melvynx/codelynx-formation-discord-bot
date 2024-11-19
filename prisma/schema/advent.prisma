@@ -1,0 +1,8 @@
+model AdventMessage {
+  id        String          @id
+  name      String
+  link      String
+
+  scheduleTime DateTime
+  sendTime  DateTime?
+}

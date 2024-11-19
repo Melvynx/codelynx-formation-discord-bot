@@ -12,6 +12,7 @@ import { NewLinkThreadName } from "./components/new_link_thread_name/new_link_th
 import { RenameLinkThread } from "./components/rename_link_thread/rename_link_thread.class";
 import { VerificationModal } from "./components/verification_modal/verification_modal.class";
 import { VerifyButton } from "./components/verify_button/verify.button.class";
+import { SendAdventMessageTask } from "./cron/schedule_message/sendAdventMessages.task";
 import { VerificationRememberTask } from "./cron/verification_remeber/verification_remember.task";
 import { AdventMessageCreate } from "./events/advent_calendar/adventMessageCreate.class";
 import { AdventMessageUpdate } from "./events/advent_calendar/adventMessageUpdate.class";
@@ -64,7 +65,7 @@ client.on("ready", async () => {
   );
   client.commandManager.resolveCommands(commands, apisCommands);
 
-  client.taskManager.loadTasks([new VerificationRememberTask(client)]);
+  client.taskManager.loadTasks([new VerificationRememberTask(client), new SendAdventMessageTask(client)]);
 });
 
 void startWebhookServer();

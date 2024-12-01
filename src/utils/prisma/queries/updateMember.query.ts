@@ -3,14 +3,22 @@ import { prisma } from "../prisma.util";
 
 type UpdateMemberQueryType = Prisma.MemberUpsertArgs;
 
-export async function updateMemberQuery({
+export function updateMemberQuery({
   create,
   update,
   where,
 }: UpdateMemberQueryType) {
-  await prisma.member.upsert({
+  return prisma.member.upsert({
     where,
     update,
     create,
+    include: {
+      products: true,
+      bundles: {
+        include: {
+          products: true,
+        },
+      },
+    },
   });
 }

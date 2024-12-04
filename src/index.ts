@@ -4,6 +4,7 @@ import { UnverifiedMemberListCommand } from "@/commands/unverified_member_list/u
 import { ArcClient } from "arcscord";
 import { AdminCommand } from "./commands/admin/admin.class";
 import { AdventCommand } from "./commands/advent_challenge/advent_challenge.class";
+import { WinnerCommand } from "./commands/advent_challenge/winner/winner.class";
 import { PingCommand } from "./commands/ping/ping.class";
 import { SearchCommand } from "./commands/search/search.class";
 import { SolutionCommand } from "./commands/solution/solution.class";
@@ -56,6 +57,7 @@ client.on("ready", async () => {
     new AdventCommand(client),
     new UnverifiedMemberListCommand(client),
     new PingCommand(client),
+    new WinnerCommand(client),
   ];
 
   const data = client.commandManager.loadCommands(commands);

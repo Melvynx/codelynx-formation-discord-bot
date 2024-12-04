@@ -47,6 +47,7 @@ export const envSchema = z.object({
 
   // DISCORD TAG ID
   RESOLVED_THREAD_TAG_ID: z.string(),
+  RESOLVED_ADVENT_TAG_ID: z.string(),
 
   // FEATURES
   WELCOME_MESSAGE: z.string(),

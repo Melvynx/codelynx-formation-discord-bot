@@ -3,3 +3,5 @@
 /node_modules
 *.internal.*
 script/test_api/index.ts
+
+dist/

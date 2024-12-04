@@ -26,4 +26,6 @@ model Member {
   createAt      DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   deletedAt     DateTime?
+
+  
 }

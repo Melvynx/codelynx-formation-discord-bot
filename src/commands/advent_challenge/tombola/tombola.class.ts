@@ -1,38 +1,33 @@
-import { adventResultEmbedBuilder } from "@/components/advent/tombola_embed.builder";
-import type { tombolaEmbedPropsSchema } from "@/components/advent/tombolaEmbedProps.type";
+import type { tombolaEmbedProps } from "@/components/advent/tombolaEmbedProps.type";
 import type { CommandRunContext, CommandRunResult } from "arcscord";
+import type { adventScores } from "../scores/scores.type";
+import { adventResultEmbedBuilder } from "@/components/advent/tombola_embed.builder";
+import { LynxLogger } from "@/utils/log/log.util";
+import { GetAdventChallengeMinimumTimeResponseQuery } from "@/utils/prisma/queries/adventChallenge/getAdventChallengeMinimumTimeResponse.query";
+import { getAdventChallengeWinnersQuery } from "@/utils/prisma/queries/adventChallenge/getAdventChallengeWinners.query";
 import { SubCommand } from "arcscord";
-import type { adventScoresSchema } from "../scores/scores.type";
+import { isBefore } from "date-fns";
 
 export class AdventTombolaSubCommand extends SubCommand {
-
   subName = "tombola";
 
-
   async run(ctx: CommandRunContext): Promise<CommandRunResult> {
+    const noelDate = new Date("2024-12-25");
+    if (isBefore(new Date(), noelDate)) {
+      LynxLogger.warn(`${ctx.interaction.user.username} try to use the advent tombola before the 25 December`);
+      return this.editReply(ctx, {
+        content: "Error you cannot use this command before 25 December",
+      });
+    }
 
-    // const noelDate = new Date("2024-12-25");
-    // if (isBefore(new Date(), noelDate)) {
-    //   defaultLogger.warning(`${ctx.interaction.user.username} try to use the advent tombola before the 25 December`);
-    //   return this.editReply(ctx, {
-    //     content: "Error you cannot use this command before 25 December",
-    //   });
-    // }
+    const scores = await getAdventChallengeWinnersQuery();
 
-    const scores: adventScoresSchema = [
-      { userId: "457144873859022858", ticketCount: 5 },
-      { userId: "152125692618735616", ticketCount: 10 },
-      { userId: "826527359141675019", ticketCount: 3 },
-      { userId: "720046808679841803", ticketCount: 7 },
-    ];
-
-    const allTickets: adventScoresSchema = scores.flatMap(s => Array.from({ length: s.ticketCount }, (_, idx) => ({
-      userId: s.userId,
+    const allTickets: adventScores = scores.flatMap(s => Array.from({ length: s._count.tickets }, (_, idx) => ({
+      userId: s.discordId,
       ticketCount: idx,
     })));
 
-
-    const winners: adventScoresSchema = [];
+    const winners: adventScores = [];
     while (winners.length < 3 && allTickets.length > 0) {
       const randomIndex = Math.floor(Math.random() * allTickets.length);
 
@@ -40,18 +35,34 @@ export class AdventTombolaSubCommand extends SubCommand {
       allTickets.splice(randomIndex, 1);
     }
 
-    const tombolaResultData: tombolaEmbedPropsSchema = {
-      participants: scores,
-      moreTicket: scores.reduce((prev, current) => {
-        return prev.ticketCount > current.ticketCount ? prev : current;
-      }),
+    const userMoreTicket = scores.reduce((prev, current) => {
+      return prev._count.tickets > current._count.tickets ? prev : current;
+    });
+    const userMoreMessage = scores.reduce((prev, current) => {
+      return prev.messageCount > current.messageCount ? prev : current;
+    });
+
+    const userQuickTime = await GetAdventChallengeMinimumTimeResponseQuery();
+    if (!userQuickTime || !userQuickTime.adventUser || !userQuickTime.adventUser.discordId) {
+      LynxLogger.warn("AdventTombolaSubCommand => No user found with the minimum time to response");
+      return this.editReply(ctx, {
+        content: "Error no user found with the minimum time to response",
+      });
+    }
+
+    const tombolaResultData: tombolaEmbedProps = {
+      participants: scores.map(u => ({ userId: u.discordId, ticketCount: u._count.tickets })),
+      moreTicket: {
+        userId: userMoreTicket.discordId,
+        ticketCount: userMoreTicket._count.tickets,
+      },
       moreMessage: {
-        userId: scores[0].userId,
-        messageCount: 186,
+        userId: userMoreMessage.discordId,
+        messageCount: userMoreMessage.messageCount,
       },
       quickTime: {
-        userId: scores[3].userId,
-        responseTime: 1500,
+        userId: userQuickTime.adventUser.discordId,
+        responseTime: userQuickTime.timeToResponse,
       },
       firstReward: winners[0],
       secondReward: winners[1],
@@ -63,5 +74,4 @@ export class AdventTombolaSubCommand extends SubCommand {
       content: "success",
     });
   }
-
 }

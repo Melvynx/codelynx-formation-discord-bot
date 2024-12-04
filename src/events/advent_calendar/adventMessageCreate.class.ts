@@ -1,5 +1,6 @@
 import type { EventHandleResult } from "arcscord";
 import { env } from "@/utils/env/env.util";
+import { updateAdventMessageCountQuery } from "@/utils/prisma/queries/adventChallenge/updateAdventMessageCount.query";
 import { error, Event, EventError, ok } from "arcscord";
 import { ChannelType, GuildMember, type Message } from "discord.js";
 
@@ -38,6 +39,7 @@ export class AdventMessageCreate extends Event<"messageCreate"> {
       !messages.some(m => m.author.id === author.id && m.id !== message.id)
       || author.permissions.has("ManageThreads")
     ) {
+      await updateAdventMessageCountQuery(author.id);
       return ok("Author has not already posted a solution or has manage threads permission");
     }
 
@@ -48,12 +50,11 @@ Il semblerais que tu ai deja poster ta solution *tu ne peut en poster* ***qu'une
 *Ce message ainsi que celui que tu as mis seront supprimer automatiquement dans 60 secondes*`,
     );
 
-    await new Promise(resolve => setTimeout(resolve, 5 * 1000));
+    await new Promise(resolve => setTimeout(resolve, 60 * 1000));
     await messageReply.delete();
     await message.delete();
 
-    await author.send(`Hello, tu à poster plusieurs solutions dans le [channel de l'événement de l'avent](https://discord.com/channels/${env.SERVER_ID}/${message.channelId}). Tu ne peut en poster qu'une seule par jour. Le message que tu as poster à été supprimer.
-      Voici le message que tu as poster:\n${message.content}`);
+    await author.send(`Hello, tu à poster plusieurs solutions dans le [channel de l'événement de l'avent](https://discord.com/channels/${env.SERVER_ID}/${message.channelId}). Tu ne peut en poster qu'une seule par jour. Le message que tu as poster à été supprimer.\nVoici le message que tu as poster:\n${message.content}`);
 
     return ok(true);
   }

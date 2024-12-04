@@ -18,4 +18,4 @@ export const tombolaEmbedPropsSchema = z.object({
   thirdReward: adventScoreSchema,
 });
 
-export type tombolaEmbedPropsSchema = z.infer<typeof tombolaEmbedPropsSchema>;
+export type tombolaEmbedProps = z.infer<typeof tombolaEmbedPropsSchema>;

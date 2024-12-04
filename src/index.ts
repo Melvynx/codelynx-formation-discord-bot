@@ -3,6 +3,8 @@ import type { ClientEvents } from "discord.js";
 import { UnverifiedMemberListCommand } from "@/commands/unverified_member_list/unverified_member_list.class";
 import { ArcClient } from "arcscord";
 import { AdminCommand } from "./commands/admin/admin.class";
+import { AdventCommand } from "./commands/advent_challenge/advent_challenge.class";
+import { WinnerCommand } from "./commands/advent_challenge/winner/winner.class";
 import { PingCommand } from "./commands/ping/ping.class";
 import { SearchCommand } from "./commands/search/search.class";
 import { SolutionCommand } from "./commands/solution/solution.class";
@@ -11,7 +13,10 @@ import { NewLinkThreadName } from "./components/new_link_thread_name/new_link_th
 import { RenameLinkThread } from "./components/rename_link_thread/rename_link_thread.class";
 import { VerificationModal } from "./components/verification_modal/verification_modal.class";
 import { VerifyButton } from "./components/verify_button/verify.button.class";
+import { SendAdventMessageTask } from "./cron/schedule_message/sendAdventMessages.task";
 import { VerificationRememberTask } from "./cron/verification_remeber/verification_remember.task";
+import { AdventMessageCreate } from "./events/advent_calendar/adventMessageCreate.class";
+import { AdventMessageUpdate } from "./events/advent_calendar/adventMessageUpdate.class";
 import { AutoTreads } from "./events/auto_threads/auto_threads.class";
 import { ClosedTicketLimit } from "./events/closedTicketLimit/closedTicketLimit.class";
 import { SolutionCreateThread } from "./events/solution/create_thread_solution.class";
@@ -31,6 +36,8 @@ const events = [
   new AutoTreads(client),
   new SolutionCreateThread(client),
   new ClosedTicketLimit(client),
+  new AdventMessageCreate(client),
+  new AdventMessageUpdate(client),
 ];
 
 void client.eventManager.loadEvents(events as Event<keyof ClientEvents>[]);
@@ -47,8 +54,10 @@ client.on("ready", async () => {
     new SearchCommand(client),
     new SolutionCommand(client),
     new AdminCommand(client),
+    new AdventCommand(client),
     new UnverifiedMemberListCommand(client),
     new PingCommand(client),
+    new WinnerCommand(client),
   ];
 
   const data = client.commandManager.loadCommands(commands);
@@ -58,7 +67,7 @@ client.on("ready", async () => {
   );
   client.commandManager.resolveCommands(commands, apisCommands);
 
-  client.taskManager.loadTasks([new VerificationRememberTask(client)]);
+  client.taskManager.loadTasks([new VerificationRememberTask(client), new SendAdventMessageTask(client)]);
 });
 
 void startWebhookServer();

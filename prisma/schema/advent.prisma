@@ -1,0 +1,24 @@
+model AdventMessage {
+  id        String  @id @default(cuid())
+  name      String
+  link      String
+
+  scheduleTime DateTime @default(now())
+  sendTime  DateTime?
+}
+
+model AdventTicket {
+  id        String  @id @default(cuid())
+  adventUserId String
+  adventUser AdventUser @relation(fields: [adventUserId], references: [discordId], onDelete: Cascade)
+  messageId String
+  dateTime  DateTime @default(now())
+  timeToResponse Int @default(0)
+}
+
+model AdventUser {
+  id        String  @id @default(cuid())
+  discordId String  @unique
+  tickets   AdventTicket[]
+  messageCount Int @default(0)
+}

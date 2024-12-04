@@ -7,9 +7,9 @@ import { GuildMember, User } from "discord.js";
  */
 export function displayName(memberOrUser: GuildMember | User): string {
   if (memberOrUser instanceof GuildMember)
-    return `<@${memberOrUser.id}>\`${memberOrUser.user.username}\``;
+    return `<@${memberOrUser.id}> \`${memberOrUser.user.username}\``;
   if (memberOrUser instanceof User)
-    return `<@${memberOrUser.id}>\`${memberOrUser.username}\``;
+    return `<@${memberOrUser.id}> \`${memberOrUser.username}\``;
 
   return "Unknown user";
 }

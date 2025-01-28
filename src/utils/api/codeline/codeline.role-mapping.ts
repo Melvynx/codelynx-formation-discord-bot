@@ -8,6 +8,7 @@ const CODELYNX_ROLE_MAPPING = {
   nextai: env.NEXTAI_ROLE_ID,
   nowts: env.NOWTS_ROLE_ID,
   nowtspro: env.NOWTSPRO_ROLE_ID,
+  beginweb: env.BEGINWEB_ROLE_ID,
 } as const;
 
 export const CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE: Record<string, string[]> = {
@@ -17,6 +18,7 @@ export const CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE: Record<string, string[]> = 
   clpqdoypw000313wyuc7cly2f: [CODELYNX_ROLE_MAPPING.nextai],
   clqn8pmte0001lr54itcjzl59: [CODELYNX_ROLE_MAPPING.nowts],
   clukhuak400017z3wlz6iw39r: [CODELYNX_ROLE_MAPPING.nextailwind],
+  clru0nzup000154ft70e637p1: [CODELYNX_ROLE_MAPPING.beginweb],
 } as const;
 
 export const CODELINE_BUNDLE_MAPPING_CODELYNX_ROLE: Record<string, string[]> = {

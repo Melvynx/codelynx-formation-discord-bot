@@ -40,4 +40,9 @@ export const CODELINE_BUNDLE_MAPPING_CODELYNX_ROLE: Record<string, string[]> = {
     CODELYNX_ROLE_MAPPING.nextai,
     CODELYNX_ROLE_MAPPING.nowts,
   ],
+  YOV8w_955Sy: [
+    CODELYNX_ROLE_MAPPING.beginweb,
+    CODELYNX_ROLE_MAPPING.nextreact,
+    CODELYNX_ROLE_MAPPING.beginreact,
+  ],
 } as const;

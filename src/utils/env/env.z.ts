@@ -44,6 +44,7 @@ export const envSchema = z.object({
   NEXTAI_ROLE_ID: z.string(),
   NOWTS_ROLE_ID: z.string(),
   NOWTSPRO_ROLE_ID: z.string(),
+  BEGINWEB_ROLE_ID: z.string(),
 
   // DISCORD TAG ID
   RESOLVED_THREAD_TAG_ID: z.string(),

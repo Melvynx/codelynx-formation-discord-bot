@@ -45,4 +45,30 @@ export const CODELINE_BUNDLE_MAPPING_CODELYNX_ROLE: Record<string, string[]> = {
     CODELYNX_ROLE_MAPPING.nextreact,
     CODELYNX_ROLE_MAPPING.beginreact,
   ],
+  // Web Start Pack
+  nXwX0IU8Z_J: [
+    CODELYNX_ROLE_MAPPING.beginweb,
+    CODELYNX_ROLE_MAPPING.beginjavascript,
+    CODELYNX_ROLE_MAPPING.beginreact,
+  ],
+  // Web React Bundle
+  "1jsvTquJLHq": [
+    CODELYNX_ROLE_MAPPING.beginweb,
+    CODELYNX_ROLE_MAPPING.beginreact,
+
+  ],
+  // WebDeveloper
+  "LJYv0rHqQ7P": [
+    CODELYNX_ROLE_MAPPING.nextreact,
+    CODELYNX_ROLE_MAPPING.beginjavascript,
+    CODELYNX_ROLE_MAPPING.beginreact,
+
+  ],
+  // SaaS Bundle
+  "cluryhgck0001rqsd1ji03b3r": [
+    CODELYNX_ROLE_MAPPING.nextai,
+    CODELYNX_ROLE_MAPPING.nextreact,
+    CODELYNX_ROLE_MAPPING.nowtspro,
+    CODELYNX_ROLE_MAPPING.nowts,
+  ]
 } as const;

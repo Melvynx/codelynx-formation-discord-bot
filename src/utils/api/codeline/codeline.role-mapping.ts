@@ -9,7 +9,7 @@ const CODELYNX_ROLE_MAPPING = {
   nowts: env.NOWTS_ROLE_ID,
   nowtspro: env.NOWTSPRO_ROLE_ID,
   beginweb: env.BEGINWEB_ROLE_ID,
-  nextfullstack: "1350383276325343243",
+  nextfullstack: env.NEXTFULLSTACK_ROLE_ID,
 } as const;
 
 export const CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE: Record<string, string[]> = {

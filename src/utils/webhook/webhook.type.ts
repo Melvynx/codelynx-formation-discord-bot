@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const webHookTypeSchema = z.enum(["purchase", "refund"]);
-const productTypeSchema = z.enum(["product", "bundle"]);
+const productTypeSchema = z.enum(["product", "bundle", "tier"]);
 
 export const productSchema = z.object({
   userId: z.string(),

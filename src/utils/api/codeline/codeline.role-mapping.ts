@@ -20,7 +20,8 @@ export const CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE: Record<string, string[]> = 
   clqn8pmte0001lr54itcjzl59: [CODELYNX_ROLE_MAPPING.nowts],
   clukhuak400017z3wlz6iw39r: [CODELYNX_ROLE_MAPPING.nextailwind],
   clru0nzup000154ft70e637p1: [CODELYNX_ROLE_MAPPING.beginweb],
-  nextfullstack: [CODELYNX_ROLE_MAPPING.nextfullstack]
+  nextfullstack: [CODELYNX_ROLE_MAPPING.nextfullstack],
+  prd_NGOWh9cxyR: [CODELYNX_ROLE_MAPPING.nextai]
 } as const;
 
 export const CODELINE_BUNDLE_MAPPING_CODELYNX_ROLE: Record<string, string[]> = {

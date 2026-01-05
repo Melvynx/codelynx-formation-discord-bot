@@ -11,6 +11,9 @@ export default antfu({
   rules: {
     "ts/consistent-type-definitions": ["error", "type"],
     "no-console": "off",
+    "style/quote-props": "off",
+    "style/operator-linebreak": "off",
+    "style/arrow-parens": "off",
   },
 }, {
   files: ["**/*.ts"],

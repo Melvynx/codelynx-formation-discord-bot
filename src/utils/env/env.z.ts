@@ -46,6 +46,8 @@ export const envSchema = z.object({
   NOWTSPRO_ROLE_ID: z.string(),
   BEGINWEB_ROLE_ID: z.string(),
   NEXTFULLSTACK_ROLE_ID: z.string(),
+  AIBUILDER_ROLE_ID: z.string(),
+  CLAUDECODE_ROLE_ID: z.string(),
 
   // DISCORD TAG ID
   RESOLVED_THREAD_TAG_ID: z.string(),
@@ -60,5 +62,5 @@ export const envSchema = z.object({
   DAY_TO_WARN: z.string(),
   DAY_TO_KICK: z.string(),
 
-  CLOSED_TICKET_LIMIT: z.string().transform(v => Number(v)),
+  CLOSED_TICKET_LIMIT: z.string().transform((v) => Number(v)),
 });

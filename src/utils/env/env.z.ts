@@ -48,6 +48,9 @@ export const envSchema = z.object({
   NEXTFULLSTACK_ROLE_ID: z.string(),
   AIBUILDER_ROLE_ID: z.string(),
   CLAUDECODE_ROLE_ID: z.string(),
+  AIBUILDER_MOBILE_ROLE_ID: z.string().default("1525457970685673614"),
+  NOWSTACK_ROLE_ID: z.string().default("1503675429071097876"),
+  ASSISTANTPRO_ROLE_ID: z.string().default("1525457972250284132"),
 
   // DISCORD TAG ID
   RESOLVED_THREAD_TAG_ID: z.string(),

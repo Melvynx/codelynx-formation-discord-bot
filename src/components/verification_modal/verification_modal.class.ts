@@ -143,7 +143,7 @@ export class VerificationModal extends ModalSubmitComponent {
 
       if (!codelineRoles)
         continue;
-      formationRoles.push(...codelineRoles);
+      formationRoles.push(...codelineRoles.filter(role => !formationRoles.includes(role)));
     }
 
     try {

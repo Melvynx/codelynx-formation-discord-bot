@@ -1,6 +1,8 @@
 import type { Product } from "./webhook.type";
 import { client } from "@/index";
 import { anyToError, defaultLogger } from "arcscord";
+import { getCodelineRoleIds } from "../api/codeline/codeline.role-mapping";
+import { getUser } from "../api/codeline/codeline.util";
 import { env } from "../env/env.util";
 import { displayName } from "../format/formatUser";
 import { LynxLogger } from "../log/log.util";
@@ -9,6 +11,7 @@ import { getProductQuery } from "../prisma/queries/getProduct.query";
 import { updateMemberQuery } from "../prisma/queries/updateMember.query";
 
 export async function onProductPurchaseAsync(webhookProduct: Product) {
+  const mappedRoleIds = getCodelineRoleIds(webhookProduct.itemId);
   const product = await getProductQuery({
     where: {
       id: webhookProduct.itemId,
@@ -23,7 +26,7 @@ export async function onProductPurchaseAsync(webhookProduct: Product) {
     });
   }
 
-  if (!bundle && !product)
+  if (!bundle && !product && mappedRoleIds.length === 0)
     throw new Error(`Product "${webhookProduct.itemId}" not found`);
 
   if (bundle) {
@@ -101,15 +104,14 @@ export async function onProductPurchaseAsync(webhookProduct: Product) {
         throw new Error("Guild not found");
 
       const member = await guild.members.fetch(webhookProduct.userDiscordId);
-      if (product)
-        await member.roles.add(product.discordRoleId);
-      if (bundle) {
-        await Promise.all(
-          bundle.products.map(product => member.roles.add(product.discordRoleId)),
-        );
-      }
+      const roleIds = mappedRoleIds.length > 0
+        ? mappedRoleIds
+        : product
+          ? [product.discordRoleId]
+          : bundle?.products.map(product => product.discordRoleId) ?? [];
+      await member.roles.add(roleIds);
 
-      const rolesString = product ? `<@&${product?.discordRoleId}>` : bundle ? bundle.products.map(p => (`<@&${p?.discordRoleId}>`)).join(" ,") : null;
+      const rolesString = roleIds.map(roleId => `<@&${roleId}>`).join(" ,");
 
       LynxLogger.info(`New product purchase
         Added role${bundle ? "s" : null} ${rolesString} to ${displayName(member)} with
@@ -127,6 +129,7 @@ export async function onProductPurchaseAsync(webhookProduct: Product) {
 }
 
 export async function onProductRefundAsync(webhookProduct: Product) {
+  const mappedRoleIds = getCodelineRoleIds(webhookProduct.itemId);
   const product = await getProductQuery({
     where: {
       id: webhookProduct.itemId,
@@ -141,7 +144,7 @@ export async function onProductRefundAsync(webhookProduct: Product) {
       },
     });
   }
-  if (!bundle && !product)
+  if (!bundle && !product && mappedRoleIds.length === 0)
     throw new Error(`Product "${webhookProduct.itemId}" not found`);
 
   if (bundle) {
@@ -207,17 +210,19 @@ export async function onProductRefundAsync(webhookProduct: Product) {
         throw new Error("Guild not found");
 
       const member = await guild.members.fetch(webhookProduct.userDiscordId);
-      if (product)
-        await member.roles.remove(product.discordRoleId);
-      if (bundle) {
-        await Promise.all(
-          bundle.products.map(product =>
-            member.roles.remove(product.discordRoleId),
-          ),
-        );
-      }
+      const roleIds = mappedRoleIds.length > 0
+        ? mappedRoleIds
+        : product
+          ? [product.discordRoleId]
+          : bundle?.products.map(product => product.discordRoleId) ?? [];
+      const [codelineUser, codelineUserError] = await getUser(webhookProduct.email);
+      const retainedRoleIds = codelineUserError
+        ? []
+        : (codelineUser?.products ?? []).flatMap(product => getCodelineRoleIds(product.id));
+      const roleIdsToRemove = roleIds.filter(roleId => !retainedRoleIds.includes(roleId));
+      await member.roles.remove(roleIdsToRemove);
 
-      const rolesString = product ? `<@&${product?.discordRoleId}>` : bundle ? bundle.products.map(p => (`<@&${p?.discordRoleId}>`)).join(" ,") : null;
+      const rolesString = roleIdsToRemove.map(roleId => `<@&${roleId}>`).join(" ,");
 
       LynxLogger.info(`New product refund
         Removed role${bundle ? "s" : null} ${rolesString} to ${displayName(member)} with

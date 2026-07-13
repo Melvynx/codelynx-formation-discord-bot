@@ -13,7 +13,8 @@ const CODELYNX_ROLE_MAPPING = {
   aibuilder: env.AIBUILDER_ROLE_ID,
   claudecode: env.CLAUDECODE_ROLE_ID,
   aibuilderMobile: env.AIBUILDER_MOBILE_ROLE_ID,
-  nowstack: env.NOWSTACK_ROLE_ID,
+  nowstack: env.NOWSTACK_SAAS_ROLE_ID,
+  nowstackMobile: env.NOWSTACK_MOBILE_ROLE_ID,
   assistantPro: env.ASSISTANTPRO_ROLE_ID,
 } as const;
 
@@ -43,9 +44,10 @@ export const CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE: Record<string, string[]> =
     prd_XJVgxVPbGG: [CODELYNX_ROLE_MAPPING.claudecode],
     // AI Builder Mobile paid course
     prd_9ndSxkfHQE: [CODELYNX_ROLE_MAPPING.aibuilderMobile],
-    // NowStack SaaS and Mobile share the NowStack members area
+    // NowStack SaaS paid course
     prd_H7vVxAv4xH: [CODELYNX_ROLE_MAPPING.nowstack],
-    prd_0R4nrZuDqZ: [CODELYNX_ROLE_MAPPING.nowstack],
+    // NowStack Mobile paid course
+    prd_0R4nrZuDqZ: [CODELYNX_ROLE_MAPPING.nowstackMobile],
     // AssistantPro / OpenClaw members area
     prd_t2GRwX3aH1: [CODELYNX_ROLE_MAPPING.assistantPro],
   } as const;
@@ -122,12 +124,12 @@ export const CODELINE_BUNDLE_MAPPING_CODELYNX_ROLE: Record<string, string[]> = {
   // AI Builder Mobile + NowStack Mobile, without Agents Config PRO
   bdl_FBDTkzMfwp: [
     CODELYNX_ROLE_MAPPING.aibuilderMobile,
-    CODELYNX_ROLE_MAPPING.nowstack,
+    CODELYNX_ROLE_MAPPING.nowstackMobile,
   ],
   // AI Builder Mobile + NowStack Mobile + Agents Config PRO
   bdl_La5lxKUR4t: [
     CODELYNX_ROLE_MAPPING.aibuilderMobile,
-    CODELYNX_ROLE_MAPPING.nowstack,
+    CODELYNX_ROLE_MAPPING.nowstackMobile,
     CODELYNX_ROLE_MAPPING.claudecode,
   ],
   // AI Builder ULTRA: SaaS + Mobile + both NowStacks + Agents + AssistantPro
@@ -135,11 +137,15 @@ export const CODELINE_BUNDLE_MAPPING_CODELYNX_ROLE: Record<string, string[]> = {
     CODELYNX_ROLE_MAPPING.aibuilder,
     CODELYNX_ROLE_MAPPING.aibuilderMobile,
     CODELYNX_ROLE_MAPPING.nowstack,
+    CODELYNX_ROLE_MAPPING.nowstackMobile,
     CODELYNX_ROLE_MAPPING.claudecode,
     CODELYNX_ROLE_MAPPING.assistantPro,
   ],
   // NowStack SaaS + NowStack Mobile
-  bdl_67ux9gZ9Fp: [CODELYNX_ROLE_MAPPING.nowstack],
+  bdl_67ux9gZ9Fp: [
+    CODELYNX_ROLE_MAPPING.nowstack,
+    CODELYNX_ROLE_MAPPING.nowstackMobile,
+  ],
 } as const;
 
 export function getCodelineRoleIds(itemId: string): string[] {

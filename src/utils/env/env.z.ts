@@ -50,6 +50,8 @@ export const envSchema = z.object({
   CLAUDECODE_ROLE_ID: z.string(),
   AIBUILDER_MOBILE_ROLE_ID: z.string().default("1525457970685673614"),
   NOWSTACK_ROLE_ID: z.string().default("1503675429071097876"),
+  NOWSTACK_SAAS_ROLE_ID: z.string().default("1526164074126119093"),
+  NOWSTACK_MOBILE_ROLE_ID: z.string().default("1526155118226051153"),
   ASSISTANTPRO_ROLE_ID: z.string().default("1525457972250284132"),
 
   // DISCORD TAG ID

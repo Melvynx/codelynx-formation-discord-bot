@@ -1,7 +1,12 @@
+import type { User } from "../api/codeline/codeline.type";
 import type { Product } from "./webhook.type";
 import { client } from "@/index";
 import { anyToError, defaultLogger } from "arcscord";
-import { getCodelineRoleIds } from "../api/codeline/codeline.role-mapping";
+import {
+  getCodelineRoleDelta,
+  getCodelineRoleIds,
+} from "../api/codeline/codeline.role-mapping";
+import { resolveCodelineRoleState } from "../api/codeline/codeline.role-state";
 import { getUser } from "../api/codeline/codeline.util";
 import { env } from "../env/env.util";
 import { displayName } from "../format/formatUser";
@@ -10,8 +15,94 @@ import { getBundleQuery } from "../prisma/queries/getBundleQuery";
 import { getProductQuery } from "../prisma/queries/getProduct.query";
 import { updateMemberQuery } from "../prisma/queries/updateMember.query";
 
+function isUnknownMemberError(error: unknown): boolean {
+  return typeof error === "object"
+    && error !== null
+    && "code" in error
+    && error.code === 10007;
+}
+
+async function getValidatedCodelineUser(
+  webhookProduct: Product,
+): Promise<NonNullable<User["user"]>> {
+  const [codelineUser, codelineUserError] = await getUser(webhookProduct.email);
+  if (codelineUserError)
+    throw codelineUserError;
+
+  if (!codelineUser)
+    throw new Error(`Codeline user "${webhookProduct.email}" not found`);
+
+  if (
+    webhookProduct.userDiscordId
+    && codelineUser.discordId
+    && webhookProduct.userDiscordId !== codelineUser.discordId
+  ) {
+    throw new Error(
+      `Discord ID mismatch for Codeline user "${webhookProduct.email}"`,
+    );
+  }
+
+  return codelineUser;
+}
+
+async function synchronizeCodelineRoles(
+  webhookProduct: Product,
+  codelineUser: NonNullable<User["user"]>,
+  eventRoleIds: readonly string[],
+  removeStaleRoles: boolean,
+): Promise<void> {
+  const discordId = webhookProduct.userDiscordId ?? codelineUser.discordId;
+  if (!discordId)
+    return;
+
+  const guild = client.guilds.cache.get(env.SERVER_ID);
+  if (!guild)
+    throw new Error("Guild not found");
+
+  let member;
+  try {
+    member = await guild.members.fetch(discordId);
+  }
+  catch (error) {
+    if (isUnknownMemberError(error))
+      return;
+    throw error;
+  }
+
+  const currentEntitlementIds = codelineUser.products.map(product => product.id);
+  const {
+    desiredRoleIds: currentDesiredRoleIds,
+    additionalManagedRoleIds,
+  } = await resolveCodelineRoleState(currentEntitlementIds);
+  const desiredRoleIds = [
+    ...new Set(removeStaleRoles
+      ? currentDesiredRoleIds
+      : [...currentDesiredRoleIds, ...eventRoleIds]),
+  ];
+  const { roleIdsToAdd, roleIdsToRemove } = getCodelineRoleDelta(
+    member.roles.cache.keys(),
+    desiredRoleIds,
+    additionalManagedRoleIds,
+  );
+
+  for (const roleId of roleIdsToAdd)
+    await member.roles.add(roleId);
+  if (removeStaleRoles) {
+    for (const roleId of roleIdsToRemove)
+      await member.roles.remove(roleId);
+  }
+
+  const addedRoles = roleIdsToAdd.map(roleId => `<@&${roleId}>`).join(" ,");
+  const removedRoles = removeStaleRoles
+    ? roleIdsToRemove.map(roleId => `<@&${roleId}>`).join(" ,")
+    : "";
+  LynxLogger.info(
+    `Codeline roles synchronized for ${displayName(member)}: added ${addedRoles || "none"}, removed ${removedRoles || "none"}`,
+  );
+}
+
 export async function onProductPurchaseAsync(webhookProduct: Product) {
-  const mappedRoleIds = getCodelineRoleIds(webhookProduct.itemId);
+  const codelineUser = await getValidatedCodelineUser(webhookProduct);
   const product = await getProductQuery({
     where: {
       id: webhookProduct.itemId,
@@ -25,9 +116,6 @@ export async function onProductPurchaseAsync(webhookProduct: Product) {
       },
     });
   }
-
-  if (!bundle && !product && mappedRoleIds.length === 0)
-    throw new Error(`Product "${webhookProduct.itemId}" not found`);
 
   if (bundle) {
     try {
@@ -97,39 +185,17 @@ export async function onProductPurchaseAsync(webhookProduct: Product) {
     }
   }
 
-  if (webhookProduct.userDiscordId) {
-    try {
-      const guild = client.guilds.cache.get(env.SERVER_ID);
-      if (!guild)
-        throw new Error("Guild not found");
-
-      const member = await guild.members.fetch(webhookProduct.userDiscordId);
-      const roleIds = mappedRoleIds.length > 0
-        ? mappedRoleIds
-        : product
-          ? [product.discordRoleId]
-          : bundle?.products.map(product => product.discordRoleId) ?? [];
-      await member.roles.add(roleIds);
-
-      const rolesString = roleIds.map(roleId => `<@&${roleId}>`).join(" ,");
-
-      LynxLogger.info(`New product purchase
-        Added role${bundle ? "s" : null} ${rolesString} to ${displayName(member)} with
-      ${product ? `product ${product.name}` : ""}
-      ${bundle ? `bundle ${bundle.products.map(p => p.name).join(", ")}` : ""}`);
-    }
-    catch (error) {
-      LynxLogger.warn(
-        `Webhook Codeline\nFailed to update member : <@${
-          webhookProduct.userDiscordId
-        }>\`${webhookProduct.email}\` with product or bundle.\n${anyToError(error).message}`,
-      );
-    }
-  }
+  const eventRoleIds = [
+    ...getCodelineRoleIds(webhookProduct.itemId),
+    ...(product
+      ? [product.discordRoleId]
+      : bundle?.products.map(product => product.discordRoleId) ?? []),
+  ];
+  await synchronizeCodelineRoles(webhookProduct, codelineUser, eventRoleIds, false);
 }
 
 export async function onProductRefundAsync(webhookProduct: Product) {
-  const mappedRoleIds = getCodelineRoleIds(webhookProduct.itemId);
+  const codelineUser = await getValidatedCodelineUser(webhookProduct);
   const product = await getProductQuery({
     where: {
       id: webhookProduct.itemId,
@@ -144,9 +210,6 @@ export async function onProductRefundAsync(webhookProduct: Product) {
       },
     });
   }
-  if (!bundle && !product && mappedRoleIds.length === 0)
-    throw new Error(`Product "${webhookProduct.itemId}" not found`);
-
   if (bundle) {
     try {
       await updateMemberQuery({
@@ -203,38 +266,5 @@ export async function onProductRefundAsync(webhookProduct: Product) {
     }
   }
 
-  if (webhookProduct.userDiscordId) {
-    try {
-      const guild = client.guilds.cache.get(env.SERVER_ID);
-      if (!guild)
-        throw new Error("Guild not found");
-
-      const member = await guild.members.fetch(webhookProduct.userDiscordId);
-      const roleIds = mappedRoleIds.length > 0
-        ? mappedRoleIds
-        : product
-          ? [product.discordRoleId]
-          : bundle?.products.map(product => product.discordRoleId) ?? [];
-      const [codelineUser, codelineUserError] = await getUser(webhookProduct.email);
-      const retainedRoleIds = codelineUserError
-        ? []
-        : (codelineUser?.products ?? []).flatMap(product => getCodelineRoleIds(product.id));
-      const roleIdsToRemove = roleIds.filter(roleId => !retainedRoleIds.includes(roleId));
-      await member.roles.remove(roleIdsToRemove);
-
-      const rolesString = roleIdsToRemove.map(roleId => `<@&${roleId}>`).join(" ,");
-
-      LynxLogger.info(`New product refund
-        Removed role${bundle ? "s" : null} ${rolesString} to ${displayName(member)} with
-      ${product ? `product ${product.name}` : ""}
-      ${bundle ? `bundle ${bundle.products.map(p => p.name).join(", ")}` : ""}`);
-    }
-    catch (error) {
-      defaultLogger.warning(
-        `Webhook Codeline\nFailed to update member : <@${
-          webhookProduct.userDiscordId
-        }>\`${webhookProduct.email}\` with product or bundle.\n${anyToError(error).message}`,
-      );
-    }
-  }
+  await synchronizeCodelineRoles(webhookProduct, codelineUser, [], true);
 }

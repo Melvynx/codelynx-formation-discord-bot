@@ -1,16 +1,20 @@
 import type { Result } from "arcscord";
 import type { User } from "./codeline.type";
-import { anyToError, BaseError, defaultLogger, error, ok } from "arcscord";
+import { anyToError, BaseError, error, ok } from "arcscord";
 import { env } from "../../env/env.util";
 import { userSchema } from "./codeline.dto";
 
 export async function getUser(email: string): Promise<Result<User["user"] | null, BaseError>> {
   try {
-    const data = await fetch(`${env.CODELINE_ENDPOINT}/api/v1/users/${email}`, {
+    const response = await fetch(`${env.CODELINE_ENDPOINT}/api/v1/users/${encodeURIComponent(email)}`, {
       headers: {
         Authorization: `Bearer ${env.CODELINE_TOKEN}`,
       },
-    }).then(data => data.json());
+    });
+    if (!response.ok) {
+      throw new Error(`Codeline request failed: ${response.status} ${response.statusText}`);
+    }
+    const data = await response.json();
 
     if (!data) {
       return ok(null);
@@ -49,18 +53,18 @@ export async function getUser(email: string): Promise<Result<User["user"] | null
 }
 
 export async function updateUserId(email: string, discordId: string): Promise<void> {
-  try {
-    await fetch(`${env.CODELINE_ENDPOINT}/api/v1/users/${email}`, {
-      headers: {
-        Authorization: `Bearer ${env.CODELINE_TOKEN}`,
-      },
-      method: "PATCH",
-      body: JSON.stringify({
-        discordId,
-      }),
-    }).then(res => res.json());
-  }
-  catch (e) {
-    defaultLogger.error(`failed to update user : ${anyToError(e).message}`);
+  const response = await fetch(`${env.CODELINE_ENDPOINT}/api/v1/users/${encodeURIComponent(email)}`, {
+    headers: {
+      Authorization: `Bearer ${env.CODELINE_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    method: "PATCH",
+    body: JSON.stringify({
+      discordId,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Codeline user update failed: ${response.status} ${response.statusText}`);
   }
 }

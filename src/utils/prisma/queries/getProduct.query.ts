@@ -12,3 +12,7 @@ export async function getProductQuery({ where }: GetProductQueryType) {
 
   return product;
 }
+
+export async function getProductsQuery() {
+  return prisma.product.findMany();
+}

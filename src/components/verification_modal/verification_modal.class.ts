@@ -1,6 +1,7 @@
 import type { ModalSubmitRunContext, ModalSubmitRunResult } from "arcscord";
 import type { GuildMember } from "discord.js";
-import { CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE } from "@/utils/api/codeline/codeline.role-mapping";
+import { getCodelineRoleDelta } from "@/utils/api/codeline/codeline.role-mapping";
+import { resolveCodelineRoleState } from "@/utils/api/codeline/codeline.role-state";
 import { displayName } from "@/utils/format/formatUser";
 import { LynxLogger } from "@/utils/log/log.util";
 import { getPresentationMessages } from "@/utils/messages/message.util";
@@ -131,39 +132,54 @@ export class VerificationModal extends ModalSubmitComponent {
       msg => msg.author.id === ctx.interaction.user.id,
     );
 
-    const formationRoles: string[] = [
-      haveDoPresentation ? env.LYNX_ROLE_ID : env.VERIFY_ROLE_ID,
-    ];
-
-    for (const product of user.products) {
-      if (!product.id) {
-        continue;
-      }
-      const codelineRoles = CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE[product.id];
-
-      if (!codelineRoles)
-        continue;
-      formationRoles.push(...codelineRoles.filter(role => !formationRoles.includes(role)));
-    }
+    const verificationRoleId = haveDoPresentation ? env.LYNX_ROLE_ID : env.VERIFY_ROLE_ID;
+    const {
+      desiredRoleIds: desiredFormationRoleIds,
+      additionalManagedRoleIds,
+    } = await resolveCodelineRoleState(user.products.map(product => product.id));
+    const { roleIdsToAdd, roleIdsToRemove } = getCodelineRoleDelta(
+      member.roles.cache.keys(),
+      desiredFormationRoleIds,
+      additionalManagedRoleIds,
+    );
+    if (!member.roles.cache.has(verificationRoleId))
+      roleIdsToAdd.unshift(verificationRoleId);
 
     try {
-      await this.editReply(
-        ctx,
-        `Vérification effectué avec succès. ${
-          !haveDoPresentation ? `La suite dans <#${env.WELCOME_CHANNEL_ID}> !` : ""
-        }`,
-      );
-      await member.roles.add(formationRoles);
+      await updateUserId(email, ctx.interaction.user.id);
     }
     catch (e) {
       return error(
         new ModalSubmitError({
-          message: "failed to add roles",
+          message: "failed to link Codeline user",
           interaction: ctx.interaction,
           baseError: anyToError(e),
         }),
       );
     }
+
+    try {
+      for (const roleId of roleIdsToAdd)
+        await member.roles.add(roleId);
+      for (const roleId of roleIdsToRemove)
+        await member.roles.remove(roleId);
+    }
+    catch (e) {
+      return error(
+        new ModalSubmitError({
+          message: "failed to synchronize roles",
+          interaction: ctx.interaction,
+          baseError: anyToError(e),
+        }),
+      );
+    }
+
+    await this.editReply(
+      ctx,
+      `Vérification effectué avec succès. ${
+        !haveDoPresentation ? `La suite dans <#${env.WELCOME_CHANNEL_ID}> !` : ""
+      }`,
+    );
 
     try {
       await member.setNickname(name, "Vérification rename");
@@ -228,7 +244,6 @@ export class VerificationModal extends ModalSubmitComponent {
           : "verify"
       }`,
     );
-    void updateUserId(email, ctx.interaction.user.id);
     return ok(true);
   }
 }

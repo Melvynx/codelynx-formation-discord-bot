@@ -15,3 +15,11 @@ export async function getBundleQuery({ where }: GetBundleQueryType) {
 
   return bundle;
 }
+
+export async function getBundlesQuery() {
+  return prisma.bundle.findMany({
+    include: {
+      products: true,
+    },
+  });
+}

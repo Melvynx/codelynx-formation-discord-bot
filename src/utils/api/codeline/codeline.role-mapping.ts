@@ -30,6 +30,8 @@ export const CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE: Record<string, string[]> =
     clpqdoypw000313wyuc7cly2f: [CODELYNX_ROLE_MAPPING.nextai],
     // NOW.TS product mapping
     clqn8pmte0001lr54itcjzl59: [CODELYNX_ROLE_MAPPING.nowts],
+    // NOW.TS PRO product mapping
+    clsb26tj500014fs4mgsnavvy: [CODELYNX_ROLE_MAPPING.nowtspro],
     // Next Tailwind product mapping
     clukhuak400017z3wlz6iw39r: [CODELYNX_ROLE_MAPPING.nextailwind],
     // Begin Web product mapping
@@ -153,4 +155,29 @@ export function getCodelineRoleIds(itemId: string): string[] {
     ...(CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE[itemId] ?? []),
     ...(CODELINE_BUNDLE_MAPPING_CODELYNX_ROLE[itemId] ?? []),
   ].filter((roleId, index, roleIds) => roleIds.indexOf(roleId) === index);
+}
+
+export function getCodelineRoleIdsForProducts(productIds: readonly string[]): string[] {
+  return [...new Set(productIds.flatMap(getCodelineRoleIds))];
+}
+
+export function getCodelineRoleDelta(
+  currentRoleIds: Iterable<string>,
+  desiredRoleIds: readonly string[],
+  additionalManagedRoleIds: readonly string[] = [],
+): { roleIdsToAdd: string[]; roleIdsToRemove: string[] } {
+  const currentRoles = new Set(currentRoleIds);
+  const desiredRoles = new Set(desiredRoleIds);
+  const managedRoles = new Set([
+    ...Object.values(CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE).flat(),
+    ...Object.values(CODELINE_BUNDLE_MAPPING_CODELYNX_ROLE).flat(),
+    ...additionalManagedRoleIds,
+  ]);
+
+  return {
+    roleIdsToAdd: [...desiredRoles].filter(roleId => !currentRoles.has(roleId)),
+    roleIdsToRemove: [...currentRoles].filter(
+      roleId => managedRoles.has(roleId) && !desiredRoles.has(roleId),
+    ),
+  };
 }

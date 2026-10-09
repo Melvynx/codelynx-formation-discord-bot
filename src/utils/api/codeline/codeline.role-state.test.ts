@@ -17,6 +17,7 @@ vi.mock("@/utils/env/env.util", () => ({
     NOWSTACK_SAAS_ROLE_ID: "nowstack",
     NOWSTACK_MOBILE_ROLE_ID: "nowstackMobile",
     ASSISTANTPRO_ROLE_ID: "assistantPro",
+    EDITING_IA_PRO_ROLE_ID: "editingIaPro",
   },
 }));
 
@@ -79,5 +80,21 @@ describe("codeline role-state resolver", () => {
     });
     expect(getProductsQuery).toHaveBeenCalledTimes(1);
     expect(getBundlesQuery).toHaveBeenCalledTimes(1);
+  });
+
+  it("resolves the Editing IA Pro role from Club product entitlements", async () => {
+    const { desiredRoleIds } = await resolveCodelineRoleState([
+      "prd_IGANgWSfkA",
+      "prd_DweXwfpCXz",
+      "prd_NGOWh9cxyR",
+    ]);
+
+    expect(desiredRoleIds).toEqual(["editingIaPro", "aibuilder"]);
+  });
+
+  it("does not desire the Editing IA Pro role without the product entitlement", async () => {
+    const { desiredRoleIds } = await resolveCodelineRoleState(["prd_NGOWh9cxyR"]);
+
+    expect(desiredRoleIds).not.toContain("editingIaPro");
   });
 });

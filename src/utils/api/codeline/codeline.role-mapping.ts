@@ -16,6 +16,7 @@ const CODELYNX_ROLE_MAPPING = {
   nowstack: env.NOWSTACK_SAAS_ROLE_ID,
   nowstackMobile: env.NOWSTACK_MOBILE_ROLE_ID,
   assistantPro: env.ASSISTANTPRO_ROLE_ID,
+  editingIaPro: env.EDITING_IA_PRO_ROLE_ID,
 } as const;
 
 export const CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE: Record<string, string[]> =
@@ -52,6 +53,8 @@ export const CODELINE_PRODUCT_MAPPING_CODELYNX_ROLE: Record<string, string[]> =
     prd_0R4nrZuDqZ: [CODELYNX_ROLE_MAPPING.nowstackMobile],
     // AssistantPro / OpenClaw members area
     prd_t2GRwX3aH1: [CODELYNX_ROLE_MAPPING.assistantPro],
+    // Editing IA Pro paid course
+    prd_DweXwfpCXz: [CODELYNX_ROLE_MAPPING.editingIaPro],
   } as const;
 
 export const CODELINE_BUNDLE_MAPPING_CODELYNX_ROLE: Record<string, string[]> = {
@@ -147,6 +150,20 @@ export const CODELINE_BUNDLE_MAPPING_CODELYNX_ROLE: Record<string, string[]> = {
   bdl_67ux9gZ9Fp: [
     CODELYNX_ROLE_MAPPING.nowstack,
     CODELYNX_ROLE_MAPPING.nowstackMobile,
+  ],
+  // AI Builder Club: active members get every formation of the bundle
+  bdl_Dg1acCvU4K: [
+    CODELYNX_ROLE_MAPPING.aibuilder,
+    CODELYNX_ROLE_MAPPING.aibuilderMobile,
+    CODELYNX_ROLE_MAPPING.nowstack,
+    CODELYNX_ROLE_MAPPING.nowstackMobile,
+    CODELYNX_ROLE_MAPPING.claudecode,
+    CODELYNX_ROLE_MAPPING.assistantPro,
+    CODELYNX_ROLE_MAPPING.editingIaPro,
+    CODELYNX_ROLE_MAPPING.nextai,
+    CODELYNX_ROLE_MAPPING.beginweb,
+    CODELYNX_ROLE_MAPPING.beginreact,
+    CODELYNX_ROLE_MAPPING.beginjavascript,
   ],
 } as const;
 

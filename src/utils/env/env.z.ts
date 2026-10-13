@@ -53,6 +53,7 @@ export const envSchema = z.object({
   NOWSTACK_SAAS_ROLE_ID: z.string().default("1526164074126119093"),
   NOWSTACK_MOBILE_ROLE_ID: z.string().default("1526155118226051153"),
   ASSISTANTPRO_ROLE_ID: z.string().default("1525457972250284132"),
+  EDITING_IA_PRO_ROLE_ID: z.string().default("1557547167923703935"),
 
   // DISCORD TAG ID
   RESOLVED_THREAD_TAG_ID: z.string(),

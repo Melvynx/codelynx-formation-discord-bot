@@ -17,6 +17,7 @@ vi.mock("@/utils/env/env.util", () => ({
     NOWSTACK_SAAS_ROLE_ID: "nowstack",
     NOWSTACK_MOBILE_ROLE_ID: "nowstackMobile",
     ASSISTANTPRO_ROLE_ID: "assistantPro",
+    EDITING_IA_PRO_ROLE_ID: "editingIaPro",
   },
 }));
 
@@ -46,6 +47,12 @@ describe("nowStack Discord role mapping", () => {
     ["bdl_67ux9gZ9Fp", ["nowstack", "nowstackMobile"]],
   ])("maps %s to the expected NowStack roles", (itemId, expectedRoleIds) => {
     expect(getCodelineRoleIds(itemId)).toEqual(expectedRoleIds);
+  });
+});
+
+describe("editing IA Pro Discord role mapping", () => {
+  it("maps the Editing IA Pro course to its role", () => {
+    expect(getCodelineRoleIds("prd_DweXwfpCXz")).toEqual(["editingIaPro"]);
   });
 });
 

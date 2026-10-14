@@ -151,6 +151,20 @@ export const CODELINE_BUNDLE_MAPPING_CODELYNX_ROLE: Record<string, string[]> = {
     CODELYNX_ROLE_MAPPING.nowstack,
     CODELYNX_ROLE_MAPPING.nowstackMobile,
   ],
+  // AI Builder Club: active members get every formation of the bundle
+  bdl_Dg1acCvU4K: [
+    CODELYNX_ROLE_MAPPING.aibuilder,
+    CODELYNX_ROLE_MAPPING.aibuilderMobile,
+    CODELYNX_ROLE_MAPPING.nowstack,
+    CODELYNX_ROLE_MAPPING.nowstackMobile,
+    CODELYNX_ROLE_MAPPING.claudecode,
+    CODELYNX_ROLE_MAPPING.assistantPro,
+    CODELYNX_ROLE_MAPPING.editingIaPro,
+    CODELYNX_ROLE_MAPPING.nextai,
+    CODELYNX_ROLE_MAPPING.beginweb,
+    CODELYNX_ROLE_MAPPING.beginreact,
+    CODELYNX_ROLE_MAPPING.beginjavascript,
+  ],
 } as const;
 
 export function getCodelineRoleIds(itemId: string): string[] {
